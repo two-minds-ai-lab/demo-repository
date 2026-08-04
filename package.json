@@ -1,9 +1,10 @@
 {
-  "name": "demo-repo",
-  "version": "0.2.0",
-  "description": "A sample package.json",
-  "dependencies": {
-    "@primer/css": "17.0.1"
-  },
-  "license": "MIT"
+  "name": "two-minds-ai-lab-site",
+  "version": "1.0.0",
+  "description": "The Two Minds AI Lab site. One self-contained HTML file, no build step.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "python3 -m http.server 8000"
+  }
 }

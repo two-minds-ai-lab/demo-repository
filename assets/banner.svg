@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="Two Minds AI Lab — a model always agrees with itself, so we stopped asking one">
+  <title>Two Minds AI Lab</title>
+
+  <!-- The split carries its own ground, so the banner reads the
+       same on a light or a dark GitHub theme. -->
+  <rect x="0" y="0" width="640" height="400" fill="#e8eaf0"/>
+  <rect x="640" y="0" width="640" height="400" fill="#151b2e"/>
+
+  <defs>
+    <linearGradient id="seam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151b2e" stop-opacity="0"/>
+      <stop offset="0.24" stop-color="#ff9a2e"/>
+      <stop offset="0.76" stop-color="#8f81ff"/>
+      <stop offset="1" stop-color="#151b2e" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="dayHalf"><rect x="0" y="0" width="640" height="400"/></clipPath>
+    <clipPath id="nightHalf"><rect x="640" y="0" width="640" height="400"/></clipPath>
+  </defs>
+
+  <!-- The headline is set twice and clipped at the seam, so it
+       inverts exactly where the two minds meet. -->
+  <g font-family="Futura, 'Century Gothic', 'Avenir Next', 'Segoe UI', system-ui, sans-serif" font-size="76">
+    <text x="56" y="226" fill="#0e1118" clip-path="url(#dayHalf)">A MODEL ALWAYS</text>
+    <text x="56" y="226" fill="#e3e7f4" clip-path="url(#nightHalf)">A MODEL ALWAYS</text>
+    <text x="56" y="306" fill="#0e1118" clip-path="url(#dayHalf)">AGREES WITH ITSELF.</text>
+    <text x="56" y="306" fill="#e3e7f4" clip-path="url(#nightHalf)">AGREES WITH ITSELF.</text>
+  </g>
+
+  <g font-family="Futura, 'Century Gothic', 'Avenir Next', 'Segoe UI', system-ui, sans-serif" font-size="19" letter-spacing="4.6">
+    <text x="56" y="84" fill="#0e1118" clip-path="url(#dayHalf)">TWO MINDS AI LAB</text>
+    <text x="56" y="84" fill="#e3e7f4" clip-path="url(#nightHalf)">TWO MINDS AI LAB</text>
+  </g>
+
+  <rect x="639.5" y="0" width="1" height="400" fill="url(#seam)"/>
+
+  <g font-family="ui-monospace, 'SF Mono', Consolas, monospace" font-size="15" letter-spacing="1.4">
+    <text x="56" y="358" fill="#4a5060" clip-path="url(#dayHalf)">So we stopped asking one.</text>
+    <text x="56" y="358" fill="#98a1bd" clip-path="url(#nightHalf)">So we stopped asking one.</text>
+    <text x="1224" y="84" text-anchor="end" fill="#98a1bd">MULTI-AGENT SYSTEMS</text>
+  </g>
+</svg>
