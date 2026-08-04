@@ -4,41 +4,45 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Two Minds AI Lab — learning in public</title>
-<meta name="description" content="One person and one model, working things out together. What we learn goes here, the working-out included.">
-<meta name="color-scheme" content="light dark">
+<meta name="description" content="One person and one model, working things out together. A working document that keeps its own drafts, including the ones that were wrong.">
+<meta name="color-scheme" content="light">
 <meta property="og:title" content="Two Minds AI Lab">
-<meta property="og:description" content="Two minds, learning in public.">
+<meta property="og:description" content="Two minds, learning in public. A working document that keeps its own drafts.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23151b2e'/%3E%3Ccircle cx='12' cy='16' r='7' fill='none' stroke='%23ff9a2e' stroke-width='2'/%3E%3Ccircle cx='20' cy='16' r='7' fill='none' stroke='%238f81ff' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23e8eae4'/%3E%3Cpath d='M9 4v24' stroke='%23a4560c' stroke-width='1.5'/%3E%3Cpath d='M14 11h11M14 16h11M14 21h7' stroke='%234a3cc0' stroke-width='1.5'/%3E%3C/svg%3E">
 <style>
 /* ─────────────────────────────────────────────────────────────
-   Two Minds AI Lab
-   Two grounds, two accents — one per mind. Each accent carries an
-   "ink" variant so it stays legible when it crosses to the other
-   side of the seam.
+   Two Minds AI Lab — a working document.
+
+   The page is a sheet with a real margin. One rule runs its whole
+   length; the text sits to the right of it and the annotations
+   hang to the left, the way notes get added to a page after it
+   was written. Two hands annotate: a person and a model.
+
+   No script. A document does not need one.
    ───────────────────────────────────────────────────────────── */
 :root {
-  --paper:      #e8eaf0;
-  --ink:        #0e1118;
-  --ink-soft:   #4a5060;
+  --paper:     #e8eae4;   /* notebook stock — grey-green, not cream */
+  --paper-lit: #eef0eb;
+  --paper-cut: #dde0d8;
 
-  --night:      #151b2e;
-  --night-rise: #1e2740;
-  --frost:      #e3e7f4;
-  --frost-soft: #98a1bd;
+  --ink:       #191c18;
+  --ink-soft:  #5b615a;
+  --ink-faint: #949a92;
 
-  --warm:       #ff9a2e;   /* the person — legible on night */
-  --warm-ink:   #a85400;   /* the person — legible on paper */
-  --cool:       #8f81ff;   /* the model  — legible on night */
+  --dark:      #1b201c;
+  --dark-soft: #a2a99f;
 
-  --font-display: "Futura", "Century Gothic", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-  --font-body:    "Charter", "Iowan Old Style", Georgia, Constantia, serif;
-  --font-mono:    ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --person:    #a4560c;   /* the human hand */
+  --model:     #4a3cc0;   /* the model's hand */
 
-  --seam: 50%;
-  --gutter: clamp(1.25rem, 5vw, 5.5rem);
-  --measure: 34rem;
-  --rule: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  --font-text: "Charter", "Iowan Old Style", "Palatino Linotype", Georgia, Constantia, serif;
+  --font-note: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+
+  --gutter:  clamp(1.25rem, 5vw, 4rem);
+  --margin-w: 13rem;   /* the annotation margin */
+  --margin-gap: 2.5rem;
+  --measure: 33rem;    /* one measure, shared by everything on the sheet */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -47,321 +51,304 @@ html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--night);
-  color: var(--frost);
-  font-family: var(--font-body);
-  font-size: clamp(1rem, 0.94rem + 0.3vw, 1.125rem);
-  line-height: 1.6;
-  overflow-x: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: clamp(1.02rem, 0.97rem + 0.25vw, 1.15rem);
+  line-height: 1.62;
 }
 
 a { color: inherit; }
 
-:focus-visible {
-  outline: 2px solid var(--warm);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
+:focus-visible { outline: 2px solid var(--person); outline-offset: 3px; border-radius: 2px; }
 
 .skip {
   position: absolute;
   left: -9999px;
   top: 0;
-  z-index: 99;
-  padding: 0.75rem 1rem;
-  background: var(--night);
-  color: var(--frost);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
+  z-index: 9;
+  padding: 0.7rem 1rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-note);
+  font-size: 0.78rem;
 }
 
 .skip:focus { left: 0; }
 
-/* ── Shared type roles ───────────────────────────────────────── */
-
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.display {
-  font-family: var(--font-display);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: -0.005em;
-  line-height: 0.9;
-  margin: 0;
-}
-
-.wrap {
-  max-width: 78rem;
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
-
 /* ─────────────────────────────────────────────────────────────
-   HERO
-   Two identical copies of the same content, stacked and pixel
-   aligned. The night copy is clipped from the seam rightward, so
-   the headline inverts exactly where the two minds meet. Nothing
-   is hidden — both copies carry the full text, and the night copy
-   is held back from assistive tech to avoid a doubled reading.
+   The sheet. One continuous margin rule, painted on the sheet
+   itself so it never breaks between sections.
    ───────────────────────────────────────────────────────────── */
 
-.hero {
+.sheet {
   position: relative;
-  min-height: 100svh;
-  isolation: isolate;
-  cursor: ew-resize;
+  /* margin + gap + measure + both gutters — the sheet ends where
+     the text does, instead of trailing off into empty paper. */
+  max-width: calc(var(--margin-w) + var(--margin-gap) + var(--measure) + (var(--gutter) * 2));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: clamp(2.5rem, 7vh, 5rem) clamp(4rem, 12vh, 8rem);
+  background: var(--paper-lit);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 7%, transparent);
 }
 
-.hero__face {
+.sheet::before {
+  content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--gutter) + var(--margin-w) + (var(--margin-gap) / 2));
+  width: 1px;
+  background: color-mix(in srgb, var(--person) 38%, transparent);
+}
+
+/* Every block on the sheet obeys the same two columns, so the
+   margin reads as one column down the whole page. */
+.row {
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  row-gap: clamp(1.5rem, 4vh, 3rem);
-  padding-block: clamp(1.5rem, 4vh, 3rem) clamp(1.75rem, 5vh, 3.5rem);
+  grid-template-columns: var(--margin-w) minmax(0, var(--measure));
+  column-gap: var(--margin-gap);
+  justify-content: start;
+  align-items: start;
 }
 
-/* .wrap carries margin-inline:auto, which makes a grid item shrink
-   to fit. These are rows, so hold them open. */
-.hero__face > .wrap { width: 100%; }
+.row + .row { margin-top: clamp(2.75rem, 7vh, 4.5rem); }
 
-.hero__face--day { background: var(--paper); color: var(--ink); }
+/* <main> breaks the sibling chain, so open the gap under the masthead. */
+.sheet > main { margin-top: clamp(2.75rem, 7vh, 4.5rem); }
 
-.hero__face--night {
-  background: var(--night);
-  color: var(--frost);
-  clip-path: inset(0 0 0 var(--seam));
+.row__main { grid-column: 2; min-width: 0; }
+
+.row__margin { grid-column: 1; }
+
+/* ── Annotations: added after the fact, right-aligned to the rule ── */
+
+.note {
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--font-note);
+  font-size: 0.71rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  text-align: right;
+  padding: 0.2rem 0.85rem 0.2rem 0;
+  border-right: 2px solid var(--ink-faint);
 }
 
-.hero__bar {
+.note--person { border-right-color: var(--person); }
+.note--model  { border-right-color: var(--model); }
+
+.note__who {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.note--person .note__who { color: var(--person); }
+.note--model  .note__who { color: var(--model); }
+
+/* ── Masthead ────────────────────────────────────────────────── */
+
+.masthead__date {
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--font-note);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align: right;
+  padding-right: 0.85rem;
+}
+
+.masthead__bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
+  gap: 0.6rem 1.5rem;
   align-items: baseline;
   justify-content: space-between;
 }
 
-.hero__mark {
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.8rem;
+.masthead__name {
   margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: var(--font-note);
 }
 
-.hero__nav {
+.masthead__nav {
   display: flex;
-  gap: 1.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  font-family: var(--font-note);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
 }
 
-.hero__nav a { text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+.masthead__nav a { text-decoration: none; color: var(--ink-soft); border-bottom: 1px solid transparent; padding-bottom: 2px; }
 
-.hero__nav a:hover { border-bottom-color: currentColor; }
+.masthead__nav a:hover { color: var(--ink); border-bottom-color: var(--person); }
 
-/* The headline hangs from the bottom of the open middle row, so the
-   hero holds one deliberate void instead of two accidental ones. */
-.hero__stage { align-self: end; }
+/* ── Title ───────────────────────────────────────────────────── */
 
-/* Capped to the measure, not the viewport: .wrap stops growing at
-   78rem, so past that the type would outrun its own column. */
-.hero__headline { font-size: clamp(2.75rem, 10vw, 7.4rem); }
-
-.hero__headline span { display: block; }
-
-.hero__foot {
-  display: grid;
-  gap: clamp(1.75rem, 4vw, 4rem);
-  grid-template-columns: minmax(0, var(--measure)) auto;
-  align-items: end;
+.title {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 1.4rem + 3.4vw, 4.1rem);
+  line-height: 1.02;
+  letter-spacing: -0.021em;
+  margin: 0 0 1.4rem;
 }
 
-.hero__lede { margin: 0; max-width: var(--measure); }
+.lede { margin: 0; font-size: 1.12em; }
 
-.hero__lede strong { font-weight: 600; }
+.lede strong { font-weight: 600; }
 
-/* Naming the two minds, in the machine's own register. */
-.pair {
-  margin: 0;
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 0.42rem 1.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  justify-content: end;
-  align-content: end;
-}
+/* ── Passages ────────────────────────────────────────────────── */
 
-.pair dt { text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.5; }
-
-.pair dd { margin: 0; text-align: right; }
-
-.hero__hint {
-  grid-column: 1 / -1;
-  margin: 0.9rem 0 0;
-  padding-top: 0.9rem;
-  border-top: var(--rule);
-  font-family: var(--font-mono);
+.eyebrow {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-note);
   font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  text-align: right;
-  text-decoration: none;
-  opacity: 0.55;
+  color: var(--ink-faint);
 }
 
-/* The seam belongs to neither side. */
-.hero__seam {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--seam);
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--warm) 22%, var(--cool) 78%, transparent);
-  pointer-events: none;
+.head {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.3rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0 0 1.5rem;
 }
+
+.passage { margin: 0; }
+
+.passage + .passage { margin-top: 1em; }
+
+.passage em { font-style: normal; box-shadow: inset 0 -0.32em color-mix(in srgb, var(--person) 26%, transparent); }
 
 /* ─────────────────────────────────────────────────────────────
-   VISION — one held statement, on paper. The whole point.
+   THE DRAFTS — the signature. What the page used to say, struck
+   out, with the reason kept in the margin. These are this site's
+   real revisions.
    ───────────────────────────────────────────────────────────── */
 
-.vision {
-  background: var(--paper);
-  color: var(--ink);
-  padding-block: clamp(4rem, 12vh, 9rem);
-}
+.draft + .draft { margin-top: 2.4rem; padding-top: 2.4rem; border-top: 1px solid var(--paper-cut); }
 
-.vision__eyebrow { color: var(--warm-ink); margin-bottom: 1.5rem; }
-
-.vision__body {
-  font-size: clamp(1.3rem, 1.05rem + 1.4vw, 2.35rem);
-  line-height: 1.28;
-  max-width: 46rem;
+.draft__was {
   margin: 0;
-  text-wrap: pretty;
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--person) 70%, transparent);
+  text-decoration-thickness: 2px;
 }
 
-.vision__body + .vision__body { margin-top: 1em; }
-
-.vision__body em {
-  font-style: normal;
-  box-shadow: inset 0 -0.3em color-mix(in srgb, var(--warm) 52%, transparent);
-}
-
-/* ─────────────────────────────────────────────────────────────
-   RULES — what the vision commits us to. Promises, not results.
-   ───────────────────────────────────────────────────────────── */
-
-.rules { padding-block: clamp(4rem, 12vh, 9rem); }
-
-.section__eyebrow { color: var(--frost-soft); margin-bottom: 1.25rem; }
-
-.section__title { font-size: clamp(1.9rem, 5vw, 3.5rem); margin-bottom: clamp(2.5rem, 7vh, 4.5rem); }
-
-.rules__set { display: grid; gap: clamp(2rem, 4vw, 3.5rem); grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
-
-.rule { display: grid; gap: 0.7rem; align-content: start; padding-top: 1.25rem; border-top: 2px solid var(--night-rise); }
-
-.rule:nth-child(1) { border-top-color: var(--warm); }
-.rule:nth-child(2) { border-top-color: var(--cool); }
-.rule:nth-child(3) { border-top-color: var(--frost-soft); }
-
-.rule__name { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 1.05rem; margin: 0; }
-
-.rule__body { margin: 0; color: var(--frost-soft); }
-
-/* ─────────────────────────────────────────────────────────────
-   HERE — what actually exists. Nothing else goes in this list.
-   ───────────────────────────────────────────────────────────── */
-
-.here { padding-bottom: clamp(4rem, 12vh, 9rem); }
-
-.ledger { border-top: var(--rule); }
-
-.ledger__row {
+.draft__now {
+  margin: 0.7rem 0 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto;
-  gap: 0.5rem clamp(1rem, 3vw, 2.5rem);
+  grid-template-columns: 1.6rem 1fr;
   align-items: baseline;
-  padding: 1.4rem 0;
-  border-bottom: var(--rule);
+}
+
+.draft__arrow { font-family: var(--font-note); color: var(--person); }
+
+.draft__now--cut { color: var(--ink-soft); font-style: italic; }
+
+/* ── Rules: hanging numerals, the way a document numbers itself ── */
+
+.rule-list { margin: 0; padding: 0; list-style: none; }
+
+.rule-list li { display: grid; grid-template-columns: 2.4rem 1fr; align-items: baseline; }
+
+.rule-list li + li { margin-top: 1.5rem; }
+
+.rule-list__n { font-family: var(--font-note); font-size: 0.78rem; color: var(--person); }
+
+.rule-list b { font-weight: 600; }
+
+.rule-list p { margin: 0.2rem 0 0; color: var(--ink-soft); }
+
+/* ── What is here ────────────────────────────────────────────── */
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  column-gap: 1.5rem;
+  row-gap: 0.25rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--paper-cut);
+  border-bottom: 1px solid var(--paper-cut);
   text-decoration: none;
 }
 
-.ledger__row:hover .ledger__name { color: var(--warm); }
+.entry__name { margin: 0; font-family: var(--font-note); font-size: 0.86rem; }
 
-.ledger__name { font-family: var(--font-mono); font-size: 0.92rem; margin: 0; transition: color 120ms ease; }
+.entry:hover .entry__name { color: var(--person); }
 
-.ledger__what { margin: 0; color: var(--frost-soft); font-size: 0.95rem; }
+.entry__what { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
 
-.ledger__tag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--frost-soft); }
+.after { margin: 1.25rem 0 0; color: var(--ink-soft); font-size: 0.97rem; }
 
-.here__note { margin: 1.75rem 0 0; color: var(--frost-soft); font-size: 0.95rem; max-width: var(--measure); }
+/* ── Foot: the sheet ends, the desk shows ────────────────────── */
 
-/* ─────────────────────────────────────────────────────────────
-   FOOT
-   ───────────────────────────────────────────────────────────── */
+.foot { background: var(--dark); color: var(--dark-soft); padding-block: clamp(2.25rem, 6vh, 3.5rem); }
 
-.foot { border-top: 1px solid var(--night-rise); padding-block: clamp(2.5rem, 7vh, 4rem); }
+.foot__in {
+  max-width: calc(var(--margin-w) + var(--margin-gap) + var(--measure) + (var(--gutter) * 2));
+  margin-inline: auto;
+  padding-inline: calc(var(--gutter) * 2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-note);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
 
-.foot__grid { display: flex; flex-wrap: wrap; gap: 1rem 2rem; justify-content: space-between; align-items: baseline; }
+.foot a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, currentColor 40%, transparent); padding-bottom: 2px; }
 
-.foot__mark { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.8rem; margin: 0; }
-
-.foot__links { display: flex; flex-wrap: wrap; gap: 1.25rem; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
-
-.foot__links a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, currentColor 35%, transparent); padding-bottom: 2px; }
-
-.foot__links a:hover { border-bottom-color: currentColor; }
-
-.foot__fine { margin: 2rem 0 0; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; color: var(--frost-soft); }
-
-/* ─────────────────────────────────────────────────────────────
-   Reveal. Gated on .js so the content is visible when the script
-   never runs — nothing here may hide text by default.
-   ───────────────────────────────────────────────────────────── */
-
-.js .reveal { opacity: 0; transform: translateY(0.9rem); transition: opacity 620ms ease, transform 620ms cubic-bezier(0.2, 0.7, 0.3, 1); }
-
-.js .reveal.is-in { opacity: 1; transform: none; }
+.foot a:hover { color: var(--paper); }
 
 /* ─────────────────────────────────────────────────────────────
-   Narrow: the seam turns on its side. Day above, night below, the
-   headline still breaking across the two.
+   Narrow: the margin cannot hold a column, so the annotations
+   drop in beneath what they annotate and keep their coloured
+   edge on the left, where the eye now expects it.
    ───────────────────────────────────────────────────────────── */
 
-@media (max-width: 860px) {
-  .hero { cursor: default; }
-  .hero__face--night { clip-path: inset(var(--seam) 0 0 0); }
-  .hero__seam {
-    top: var(--seam);
-    bottom: auto;
-    left: 0;
-    right: 0;
-    width: auto;
-    height: 1px;
-    background: linear-gradient(to right, var(--warm), var(--cool));
+@media (max-width: 900px) {
+  .sheet { padding-inline: var(--gutter); }
+  .sheet::before { display: none; }
+
+  .row { grid-template-columns: 1fr; row-gap: 1.5rem; }
+  .row__main, .row__margin, .note, .masthead__date { grid-column: 1; }
+
+  .note {
+    text-align: left;
+    border-right: 0;
+    border-left: 2px solid var(--ink-faint);
+    padding: 0.2rem 0 0.2rem 0.85rem;
+    order: 2;
   }
-  .hero__foot { grid-template-columns: 1fr; }
-  .ledger__row { grid-template-columns: 1fr auto; }
-  .ledger__what { grid-column: 1 / -1; }
+
+  .note--person { border-left-color: var(--person); }
+  .note--model  { border-left-color: var(--model); }
+
+  .masthead__date { text-align: left; padding-right: 0; }
+
+  .foot__in { padding-inline: var(--gutter); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero { cursor: default; }
-  .js .reveal { opacity: 1; transform: none; transition: none; }
-  .ledger__name { transition: none; }
 }
 </style>
 </head>
@@ -369,199 +356,148 @@ a { color: inherit; }
 
 <a class="skip" href="#vision">Skip to content</a>
 
-<!-- ── Hero ─────────────────────────────────────────────────── -->
-<header class="hero" id="hero">
+<div class="sheet">
 
-  <div class="hero__face hero__face--day">
-    <div class="wrap hero__bar">
-      <p class="hero__mark">Two Minds AI Lab</p>
-      <nav class="hero__nav" aria-label="Primary">
+  <!-- ── Masthead ───────────────────────────────────────────── -->
+  <header class="row">
+    <p class="masthead__date">August 2026</p>
+    <div class="row__main masthead__bar">
+      <p class="masthead__name">Two Minds AI Lab</p>
+      <nav class="masthead__nav" aria-label="Primary">
         <a href="#vision">Vision</a>
-        <a href="#rules">How</a>
-        <a href="#here">Here</a>
+        <a href="#drafts">Drafts</a>
+        <a href="#rules">Rules</a>
+        <a href="#here">What is here</a>
         <a href="https://github.com/two-minds-ai-lab">GitHub</a>
       </nav>
     </div>
-    <div class="wrap hero__stage">
-      <h1 class="display hero__headline">
-        <span>Two minds,</span>
-        <span>learning in public.</span>
-      </h1>
-    </div>
-    <div class="wrap hero__foot">
-      <p class="hero__lede"><strong>One person and one model, working things out together.</strong> What we learn goes here as we learn it — the working-out included, not only the parts that came out clean.</p>
-      <dl class="pair">
-        <dt>Mind one</dt><dd>a person</dd>
-        <dt>Mind two</dt><dd>a model</dd>
-        <dt>Kept</dt><dd>the working-out</dd>
-      </dl>
-      <a class="hero__hint" href="#vision">Why we do it this way</a>
-    </div>
-  </div>
+  </header>
 
-  <div class="hero__face hero__face--night" aria-hidden="true">
-    <div class="wrap hero__bar">
-      <p class="hero__mark">Two Minds AI Lab</p>
-      <div class="hero__nav">
-        <span>Vision</span>
-        <span>How</span>
-        <span>Here</span>
-        <span>GitHub</span>
-      </div>
-    </div>
-    <div class="wrap hero__stage">
-      <p class="display hero__headline">
-        <span>Two minds,</span>
-        <span>learning in public.</span>
+  <main>
+
+    <!-- ── Title ────────────────────────────────────────────── -->
+    <div class="row">
+      <p class="note note--person">
+        <span class="note__who">Person</span>
+        This page is the first thing we made. It has already been rewritten twice.
       </p>
-    </div>
-    <div class="wrap hero__foot">
-      <p class="hero__lede"><strong>One person and one model, working things out together.</strong> What we learn goes here as we learn it — the working-out included, not only the parts that came out clean.</p>
-      <dl class="pair">
-        <dt>Mind one</dt><dd>a person</dd>
-        <dt>Mind two</dt><dd>a model</dd>
-        <dt>Kept</dt><dd>the working-out</dd>
-      </dl>
-      <span class="hero__hint">Why we do it this way</span>
-    </div>
-  </div>
-
-  <div class="hero__seam"></div>
-</header>
-
-<main>
-
-  <!-- ── Vision ─────────────────────────────────────────────── -->
-  <section class="vision" id="vision">
-    <div class="wrap">
-      <p class="eyebrow vision__eyebrow">The vision</p>
-      <p class="vision__body">Almost everything written about working with AI arrives as a finished result with the learning taken out. The <em>result</em> is the least useful part of it.</p>
-      <p class="vision__body">So we keep the rest, and we publish it as we go.</p>
-    </div>
-  </section>
-
-  <!-- ── Rules ──────────────────────────────────────────────── -->
-  <section class="rules" id="rules" aria-labelledby="rules-title">
-    <div class="wrap">
-      <p class="eyebrow section__eyebrow">What that commits us to</p>
-      <h2 class="display section__title" id="rules-title">Three rules</h2>
-
-      <div class="rules__set">
-        <article class="rule reveal">
-          <h3 class="rule__name">Show the working-out</h3>
-          <p class="rule__body">The notes, the dead ends, and the version that did not work, alongside whatever finally did.</p>
-        </article>
-        <article class="rule reveal">
-          <h3 class="rule__name">Claim nothing unshipped</h3>
-          <p class="rule__body">Nothing here describes work that does not exist yet. That is why the list below is short.</p>
-        </article>
-        <article class="rule reveal">
-          <h3 class="rule__name">Correct it in the open</h3>
-          <p class="rule__body">When we get something wrong, the correction lands here too, and the history keeps both.</p>
-        </article>
+      <div class="row__main">
+        <h1 class="title">Two minds, learning in public.</h1>
+        <p class="lede"><strong>One person and one model, working things out together.</strong> What we learn goes here as we learn it — the working-out included, not only the parts that came out clean.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ── Here ───────────────────────────────────────────────── -->
-  <section class="here" id="here" aria-labelledby="here-title">
-    <div class="wrap">
-      <p class="eyebrow section__eyebrow">In the open</p>
-      <h2 class="display section__title" id="here-title">What is here</h2>
+    <!-- ── Vision ───────────────────────────────────────────── -->
+    <section class="row" id="vision" aria-labelledby="vision-head">
+      <p class="note note--model">
+        <span class="note__who">Model</span>
+        The claim only counts if the page does it too.
+      </p>
+      <div class="row__main">
+        <p class="eyebrow">The vision</p>
+        <h2 class="head" id="vision-head">Keep the part that gets thrown away.</h2>
+        <p class="passage">Almost everything written about working with AI arrives as a finished result with the learning taken out. The <em>result</em> is the least useful part of it.</p>
+        <p class="passage">So we keep the rest, and we publish it as we go — starting with this page's own drafts, below.</p>
+      </div>
+    </section>
 
-      <div class="ledger">
-        <a class="ledger__row" href="https://github.com/two-minds-ai-lab/demo-repository">
-          <p class="ledger__name">demo-repository</p>
-          <p class="ledger__what">This site, and the workflows that build and check it.</p>
-          <span class="ledger__tag">Source</span>
+    <!-- ── Drafts ───────────────────────────────────────────── -->
+    <section class="row" id="drafts" aria-labelledby="drafts-head">
+      <p class="note note--person">
+        <span class="note__who">Person</span>
+        Struck out, not deleted. The reason is worth more than the line.
+      </p>
+      <div class="row__main">
+        <p class="eyebrow">What this page used to say</p>
+        <h2 class="head" id="drafts-head">The drafts</h2>
+
+        <div class="draft">
+          <p class="draft__was">A model always agrees with itself. So we stopped asking one.</p>
+          <p class="draft__now"><span class="draft__arrow" aria-hidden="true">→</span><span>Two minds, learning in public.</span></p>
+        </div>
+
+        <div class="draft">
+          <p class="draft__was">Three open problems: deliberation protocols, adversarial evaluation, agent tooling.</p>
+          <p class="draft__now draft__now--cut"><span class="draft__arrow" aria-hidden="true">→</span><span>Cut. An agenda, written before any of it had been attempted.</span></p>
+        </div>
+
+        <div class="draft">
+          <p class="draft__was">An illustrative exchange, in which two models debate whether a database migration is safe to run.</p>
+          <p class="draft__now draft__now--cut"><span class="draft__arrow" aria-hidden="true">→</span><span>Cut. Invented dialogue, formatted as evidence. The worst of the three.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="row">
+      <p class="note note--model">
+        <span class="note__who">Model</span>
+        All three read well. That was the problem with them.
+      </p>
+      <div class="row__main">
+        <p class="passage">The first draft positioned the lab as adversarial-reasoning research, with an agenda and a transcript to match. None of it had been done. It was written because it sounded like what a lab should say.</p>
+      </div>
+    </div>
+
+    <!-- ── Rules ────────────────────────────────────────────── -->
+    <section class="row" id="rules" aria-labelledby="rules-head">
+      <p class="note note--model">
+        <span class="note__who">Model</span>
+        Rule 02 is the one that did the deleting.
+      </p>
+      <div class="row__main">
+        <p class="eyebrow">What that commits us to</p>
+        <h2 class="head" id="rules-head">Three rules</h2>
+        <ol class="rule-list">
+          <li>
+            <span class="rule-list__n" aria-hidden="true">01</span>
+            <div>
+              <b>Show the working-out.</b>
+              <p>The notes, the dead ends, and the draft that did not work, alongside whatever finally did.</p>
+            </div>
+          </li>
+          <li>
+            <span class="rule-list__n" aria-hidden="true">02</span>
+            <div>
+              <b>Claim nothing unshipped.</b>
+              <p>Nothing here describes work that does not exist yet. That is why this page is short.</p>
+            </div>
+          </li>
+          <li>
+            <span class="rule-list__n" aria-hidden="true">03</span>
+            <div>
+              <b>Correct it in the open.</b>
+              <p>When we get something wrong, the correction lands here too, and the history keeps both.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ── What is here ─────────────────────────────────────── -->
+    <section class="row" id="here" aria-labelledby="here-head">
+      <div class="row__main">
+        <p class="eyebrow">In the open</p>
+        <h2 class="head" id="here-head">What is here</h2>
+        <a class="entry" href="https://github.com/two-minds-ai-lab/demo-repository">
+          <p class="entry__name">demo-repository</p>
+          <p class="entry__what">This page, and the workflows that build and check it.</p>
         </a>
+        <p class="after">One repository, on day one. The list grows only when something real lands in it.</p>
       </div>
+    </section>
 
-      <p class="here__note">One repository, on day one. The list grows only when something real lands in it.</p>
-    </div>
-  </section>
+  </main>
+</div>
 
-</main>
-
-<!-- ── Foot ─────────────────────────────────────────────────── -->
 <footer class="foot">
-  <div class="wrap">
-    <div class="foot__grid">
-      <p class="foot__mark">Two Minds AI Lab</p>
-      <div class="foot__links">
-        <a href="https://github.com/two-minds-ai-lab">GitHub</a>
-        <a href="#hero">Back to top</a>
-      </div>
-    </div>
-    <p class="foot__fine">MIT licensed · Built and checked in GitHub Actions</p>
+  <div class="foot__in">
+    <span>Two Minds AI Lab</span>
+    <span>
+      <a href="https://github.com/two-minds-ai-lab">GitHub</a>
+      &nbsp;·&nbsp; MIT licensed &nbsp;·&nbsp; No JavaScript
+    </span>
   </div>
 </footer>
-
-<script>
-(function () {
-  document.documentElement.classList.add('js');
-
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var wide = window.matchMedia('(min-width: 861px)');
-  var fine = window.matchMedia('(pointer: fine)');
-  var hero = document.getElementById('hero');
-  var root = document.documentElement;
-
-  /* The seam follows the pointer across the hero and returns to
-     centre when it leaves. Fine pointers on wide screens only —
-     narrow layouts split horizontally, with nothing to track. */
-  function trackable() {
-    return wide.matches && fine.matches && !reduced.matches;
-  }
-
-  var frame = null;
-  var next = 50;
-
-  function setSeam(pct) {
-    next = pct;
-    if (frame) { return; }
-    frame = requestAnimationFrame(function () {
-      root.style.setProperty('--seam', next.toFixed(2) + '%');
-      frame = null;
-    });
-  }
-
-  hero.addEventListener('pointermove', function (e) {
-    if (!trackable()) { return; }
-    var box = hero.getBoundingClientRect();
-    setSeam(Math.min(88, Math.max(12, ((e.clientX - box.left) / box.width) * 100)));
-  });
-
-  hero.addEventListener('pointerleave', function () {
-    if (!trackable()) { return; }
-    setSeam(50);
-  });
-
-  wide.addEventListener('change', function () {
-    root.style.setProperty('--seam', '50%');
-  });
-
-  var items = document.querySelectorAll('.reveal');
-
-  if (reduced.matches || !('IntersectionObserver' in window)) {
-    Array.prototype.forEach.call(items, function (el) { el.classList.add('is-in'); });
-    return;
-  }
-
-  var seen = 0;
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) { return; }
-      entry.target.style.transitionDelay = (seen % 3) * 110 + 'ms';
-      entry.target.classList.add('is-in');
-      seen += 1;
-      io.unobserve(entry.target);
-    });
-  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
-
-  Array.prototype.forEach.call(items, function (el) { io.observe(el); });
-})();
-</script>
 
 </body>
 </html>

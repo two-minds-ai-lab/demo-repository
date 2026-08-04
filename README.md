@@ -4,7 +4,8 @@
 
 <p align="center">
   <a href="https://github.com/two-minds-ai-lab/demo-repository/actions/workflows/proof-html.yml"><img src="https://github.com/two-minds-ai-lab/demo-repository/actions/workflows/proof-html.yml/badge.svg" alt="Proof HTML"></a>
-  <img src="https://img.shields.io/badge/license-MIT-0e1118" alt="MIT licensed">
+  <img src="https://img.shields.io/badge/license-MIT-191c18" alt="MIT licensed">
+  <img src="https://img.shields.io/badge/javascript-none-a4560c" alt="No JavaScript">
 </p>
 
 # Two Minds AI Lab
@@ -20,7 +21,7 @@ publish it as we go.
 
 ## Three rules
 
-**Show the working-out.** The notes, the dead ends, and the version that did not work,
+**Show the working-out.** The notes, the dead ends, and the draft that did not work,
 alongside whatever finally did.
 
 **Claim nothing unshipped.** Nothing here describes work that does not exist yet. That is
@@ -33,10 +34,10 @@ the history keeps both.
 
 | Path | What it is |
 | --- | --- |
-| `index.html` | The whole site — markup, styles, and behaviour in one file |
+| `index.html` | The whole page — markup and styles in one file, no script |
 | `assets/banner.svg` | The banner above |
 | `.github/workflows/` | Checks the rendered HTML, and assigns an owner to new issues |
-| `docs/superpowers/specs/` | The design spec the site was built from |
+| `docs/superpowers/specs/` | The design spec, including the direction that was abandoned |
 
 ## Run it
 
@@ -54,20 +55,26 @@ Then open <http://localhost:8000>.
 
 Kept here because they are part of the working-out.
 
-**One file.** GitHub Pages serves these files as they are, so `index.html` inlines its own
-styles and script and makes zero external requests. A bundler or a CDN would not survive
-the trip.
+**The page is a sheet with a margin.** One rule runs its whole length. The text sits to the
+right of it and the annotations hang to the left, the way notes get added to a page after
+it was written. Two hands annotate — a person and a model — and each keeps its own colour.
 
-**System typefaces only.** No webfonts means no network round-trip and no layout shift.
+**The drafts stay on the page.** What the site used to say is struck through rather than
+deleted, with the reason kept beside it. Those are this page's real revisions, not
+illustrations of the idea. It is the first rule applied to the page itself.
 
-**The seam.** The hero is typeset twice, once light and once dark, and the dark copy is
-clipped at a divider that follows your pointer — so the headline inverts where the two
-minds meet. Both copies carry the full text, so nothing is hidden when the script does not
-run, and the duplicate is held back from assistive technology to avoid a doubled reading.
+**No JavaScript.** An earlier version needed a script for a pointer-tracked effect in the
+hero. A document does not need one, so there isn't one.
 
-**What degrades.** Scroll reveals are gated behind a `.js` class, so no text is invisible
-without JavaScript. `prefers-reduced-motion` pins the seam and drops every transition.
-Below 860px the split turns on its side.
+**One file, no build step.** GitHub Pages serves these files as they are, so `index.html`
+inlines its own styles and makes zero external requests. A bundler or a CDN would not
+survive the trip.
+
+**System typefaces only.** A serif for reading and a monospace for the margin. No webfonts
+means no network round-trip and no layout shift.
+
+**What degrades.** Below 900px the margin cannot hold a column, so annotations drop in
+beneath what they annotate and keep their coloured edge on the left.
 
 ## License
 
