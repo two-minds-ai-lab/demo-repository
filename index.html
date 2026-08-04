@@ -180,7 +180,9 @@ a { color: inherit; }
    the hero holds one deliberate void instead of two accidental ones. */
 .hero__stage { align-self: end; }
 
-.hero__headline { font-size: clamp(2.75rem, 10vw, 9.5rem); }
+/* Capped to the measure, not the viewport: .wrap stops growing at
+   78rem, so past that the type would outrun its own column. */
+.hero__headline { font-size: clamp(2.75rem, 10vw, 7.4rem); }
 
 .hero__headline span { display: block; }
 
