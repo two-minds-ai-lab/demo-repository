@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Two Minds AI Lab — multi-agent systems research</title>
-<meta name="description" content="Two Minds AI Lab builds multi-agent systems where reasoning is contested before it is returned. One model proposes, one attacks, and the answer is what survives.">
+<title>Two Minds AI Lab — learning in public</title>
+<meta name="description" content="One person and one model, working things out together. What we learn goes here, the working-out included.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Two Minds AI Lab">
-<meta property="og:description" content="A model always agrees with itself. So we stopped asking one.">
+<meta property="og:description" content="Two minds, learning in public.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23151b2e'/%3E%3Ccircle cx='12' cy='16' r='7' fill='none' stroke='%23ff9a2e' stroke-width='2'/%3E%3Ccircle cx='20' cy='16' r='7' fill='none' stroke='%238f81ff' stroke-width='2'/%3E%3C/svg%3E">
 <style>
 /* ─────────────────────────────────────────────────────────────
    Two Minds AI Lab
-   Two grounds, two accents. Each accent carries an "ink" variant
-   so it stays legible when it crosses to the other side.
+   Two grounds, two accents — one per mind. Each accent carries an
+   "ink" variant so it stays legible when it crosses to the other
+   side of the seam.
    ───────────────────────────────────────────────────────────── */
 :root {
   --paper:      #e8eaf0;
-  --paper-sunk: #dbdfe9;
   --ink:        #0e1118;
   --ink-soft:   #4a5060;
 
@@ -27,10 +27,9 @@
   --frost:      #e3e7f4;
   --frost-soft: #98a1bd;
 
-  --warm:       #ff9a2e;   /* the proposer — legible on night */
-  --warm-ink:   #a85400;   /* the proposer — legible on paper */
-  --cool:       #8f81ff;   /* the critic   — legible on night */
-  --cool-ink:   #4436c9;   /* the critic   — legible on paper */
+  --warm:       #ff9a2e;   /* the person — legible on night */
+  --warm-ink:   #a85400;   /* the person — legible on paper */
+  --cool:       #8f81ff;   /* the model  — legible on night */
 
   --font-display: "Futura", "Century Gothic", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --font-body:    "Charter", "Iowan Old Style", Georgia, Constantia, serif;
@@ -104,7 +103,7 @@ a { color: inherit; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   HERO — the signature.
+   HERO
    Two identical copies of the same content, stacked and pixel
    aligned. The night copy is clipped from the seam rightward, so
    the headline inverts exactly where the two minds meet. Nothing
@@ -128,14 +127,11 @@ a { color: inherit; }
   padding-block: clamp(1.5rem, 4vh, 3rem) clamp(1.75rem, 5vh, 3.5rem);
 }
 
-/* .wrap carries margin-inline:auto, which makes a grid item
-   shrink to fit. These are rows, so hold them open. */
+/* .wrap carries margin-inline:auto, which makes a grid item shrink
+   to fit. These are rows, so hold them open. */
 .hero__face > .wrap { width: 100%; }
 
-.hero__face--day {
-  background: var(--paper);
-  color: var(--ink);
-}
+.hero__face--day { background: var(--paper); color: var(--ink); }
 
 .hero__face--night {
   background: var(--night);
@@ -168,16 +164,12 @@ a { color: inherit; }
   text-transform: uppercase;
 }
 
-.hero__nav a {
-  text-decoration: none;
-  padding-bottom: 2px;
-  border-bottom: 1px solid transparent;
-}
+.hero__nav a { text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
 
 .hero__nav a:hover { border-bottom-color: currentColor; }
 
-/* The headline hangs from the bottom of the open middle row, so
-   the hero holds one deliberate void instead of two accidental ones. */
+/* The headline hangs from the bottom of the open middle row, so the
+   hero holds one deliberate void instead of two accidental ones. */
 .hero__stage { align-self: end; }
 
 /* Capped to the measure, not the viewport: .wrap stops growing at
@@ -197,8 +189,8 @@ a { color: inherit; }
 
 .hero__lede strong { font-weight: 600; }
 
-/* The machine side's own vernacular: the exchange below, tallied. */
-.trace {
+/* Naming the two minds, in the machine's own register. */
+.pair {
   margin: 0;
   display: grid;
   grid-template-columns: auto auto;
@@ -210,9 +202,9 @@ a { color: inherit; }
   align-content: end;
 }
 
-.trace dt { text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.5; }
+.pair dt { text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.5; }
 
-.trace dd { margin: 0; text-align: right; }
+.pair dd { margin: 0; text-align: right; }
 
 .hero__hint {
   grid-column: 1 / -1;
@@ -240,160 +232,59 @@ a { color: inherit; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   THESIS — one held sentence, on paper, before the argument.
+   VISION — one held statement, on paper. The whole point.
    ───────────────────────────────────────────────────────────── */
 
-.thesis {
-  position: relative;
+.vision {
   background: var(--paper);
   color: var(--ink);
   padding-block: clamp(4rem, 12vh, 9rem);
 }
 
-.thesis__eyebrow { color: var(--warm-ink); margin-bottom: 1.5rem; }
+.vision__eyebrow { color: var(--warm-ink); margin-bottom: 1.5rem; }
 
-.thesis__body {
+.vision__body {
   font-size: clamp(1.3rem, 1.05rem + 1.4vw, 2.35rem);
   line-height: 1.28;
   max-width: 46rem;
   margin: 0;
-  text-wrap: balance;
+  text-wrap: pretty;
 }
 
-.thesis__body em {
+.vision__body + .vision__body { margin-top: 1em; }
+
+.vision__body em {
   font-style: normal;
   box-shadow: inset 0 -0.3em color-mix(in srgb, var(--warm) 52%, transparent);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   EXCHANGE — the split turned structural. Two mandates, two
-   grounds, one column each. Turns are numbered because they are
-   genuinely a sequence: each reply depends on the one before it.
+   RULES — what the vision commits us to. Promises, not results.
    ───────────────────────────────────────────────────────────── */
 
-.exchange__head {
-  background: var(--paper);
-  color: var(--ink);
-  padding-bottom: clamp(2rem, 6vh, 4rem);
-}
-
-.exchange__title { font-size: clamp(1.9rem, 5vw, 4rem); margin-bottom: 1.5rem; }
-
-.exchange__prompt {
-  font-family: var(--font-mono);
-  font-size: 0.86rem;
-  line-height: 1.65;
-  border-left: 2px solid var(--ink);
-  padding: 0.15rem 0 0.15rem 1rem;
-  margin: 0;
-  max-width: 44rem;
-}
-
-.exchange__prompt b {
-  display: block;
-  font-weight: 400;
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  margin-bottom: 0.35rem;
-}
-
-.exchange__floor { display: grid; grid-template-columns: 1fr 1fr; }
-
-.side { padding: clamp(2rem, 6vh, 4.5rem) clamp(1.25rem, 3.5vw, 3rem); }
-
-.side--day   { background: var(--paper); color: var(--ink); }
-.side--night { background: var(--night);  color: var(--frost); }
-
-.side__role { display: flex; align-items: baseline; gap: 0.6rem; margin: 0 0 0.4rem; }
-
-.side--day   .side__role { color: var(--warm-ink); }
-.side--night .side__role { color: var(--cool); }
-
-.side__mandate {
-  font-size: 0.95rem;
-  margin: 0 0 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: var(--rule);
-}
-
-.side--day   .side__mandate { color: var(--ink-soft); }
-.side--night .side__mandate { color: var(--frost-soft); }
-
-.turn { margin: 0 0 1.75rem; display: grid; grid-template-columns: 2.25rem 1fr; }
-
-.turn:last-child { margin-bottom: 0; }
-
-.turn__n {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  padding-top: 0.42em;
-  opacity: 0.55;
-}
-
-.turn__text { margin: 0; }
-
-.turn__text code { font-family: var(--font-mono); font-size: 0.86em; padding: 0.1em 0.3em; border-radius: 2px; }
-
-.side--day   .turn__text code { background: var(--paper-sunk); }
-.side--night .turn__text code { background: var(--night-rise); }
-
-/* Two strokes that actually meet. */
-.converge { background: var(--night); padding-block: clamp(2.5rem, 7vh, 5rem); }
-
-.converge__mark { display: block; width: 100%; max-width: 38rem; height: auto; margin-inline: auto; }
-
-.verdict { background: var(--night); color: var(--frost); padding-bottom: clamp(4rem, 12vh, 8rem); }
-
-.verdict__label { color: var(--frost-soft); margin-bottom: 1rem; }
-
-.verdict__text {
-  font-size: clamp(1.15rem, 1rem + 0.9vw, 1.85rem);
-  line-height: 1.4;
-  max-width: 48rem;
-  margin: 0 0 1.5rem;
-  text-wrap: pretty;
-}
-
-.verdict__text code { font-family: var(--font-mono); font-size: 0.82em; }
-
-.disclaimer {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  color: var(--frost-soft);
-  margin: 0;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   WORK — the ground has resolved. One side from here down.
-   ───────────────────────────────────────────────────────────── */
-
-.work { padding-block: clamp(4rem, 12vh, 9rem); border-top: 1px solid var(--night-rise); }
+.rules { padding-block: clamp(4rem, 12vh, 9rem); }
 
 .section__eyebrow { color: var(--frost-soft); margin-bottom: 1.25rem; }
 
 .section__title { font-size: clamp(1.9rem, 5vw, 3.5rem); margin-bottom: clamp(2.5rem, 7vh, 4.5rem); }
 
-.tracks { display: grid; gap: clamp(2rem, 4vw, 3.5rem); grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.rules__set { display: grid; gap: clamp(2rem, 4vw, 3.5rem); grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
 
-.track { display: grid; gap: 0.7rem; align-content: start; padding-top: 1.25rem; border-top: 2px solid var(--night-rise); }
+.rule { display: grid; gap: 0.7rem; align-content: start; padding-top: 1.25rem; border-top: 2px solid var(--night-rise); }
 
-.track:nth-child(1) { border-top-color: var(--warm); }
-.track:nth-child(2) { border-top-color: var(--cool); }
-.track:nth-child(3) { border-top-color: var(--frost-soft); }
+.rule:nth-child(1) { border-top-color: var(--warm); }
+.rule:nth-child(2) { border-top-color: var(--cool); }
+.rule:nth-child(3) { border-top-color: var(--frost-soft); }
 
-.track__name { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 1.05rem; margin: 0; }
+.rule__name { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 1.05rem; margin: 0; }
 
-.track__body { margin: 0; color: var(--frost-soft); }
+.rule__body { margin: 0; color: var(--frost-soft); }
 
 /* ─────────────────────────────────────────────────────────────
-   PUBLIC — what actually exists. No invented ledger.
+   HERE — what actually exists. Nothing else goes in this list.
    ───────────────────────────────────────────────────────────── */
 
-.public { padding-bottom: clamp(4rem, 12vh, 9rem); }
+.here { padding-bottom: clamp(4rem, 12vh, 9rem); }
 
 .ledger { border-top: var(--rule); }
 
@@ -415,7 +306,7 @@ a { color: inherit; }
 
 .ledger__tag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--frost-soft); }
 
-.public__note { margin: 1.75rem 0 0; color: var(--frost-soft); font-size: 0.95rem; max-width: var(--measure); }
+.here__note { margin: 1.75rem 0 0; color: var(--frost-soft); font-size: 0.95rem; max-width: var(--measure); }
 
 /* ─────────────────────────────────────────────────────────────
    FOOT
@@ -436,19 +327,17 @@ a { color: inherit; }
 .foot__fine { margin: 2rem 0 0; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; color: var(--frost-soft); }
 
 /* ─────────────────────────────────────────────────────────────
-   Scroll reveal — one entrance per turn, so the exchange reads
-   at the pace of an argument.
+   Reveal. Gated on .js so the content is visible when the script
+   never runs — nothing here may hide text by default.
    ───────────────────────────────────────────────────────────── */
 
-/* Gated on .js so the content is visible when the script never
-   runs. Nothing here is allowed to hide text by default. */
 .js .reveal { opacity: 0; transform: translateY(0.9rem); transition: opacity 620ms ease, transform 620ms cubic-bezier(0.2, 0.7, 0.3, 1); }
 
 .js .reveal.is-in { opacity: 1; transform: none; }
 
 /* ─────────────────────────────────────────────────────────────
-   Narrow: the seam turns on its side. Day above, night below,
-   the headline still breaking across the two.
+   Narrow: the seam turns on its side. Day above, night below, the
+   headline still breaking across the two.
    ───────────────────────────────────────────────────────────── */
 
 @media (max-width: 860px) {
@@ -464,8 +353,6 @@ a { color: inherit; }
     background: linear-gradient(to right, var(--warm), var(--cool));
   }
   .hero__foot { grid-template-columns: 1fr; }
-  .hero__hint { text-align: left; }
-  .exchange__floor { grid-template-columns: 1fr; }
   .ledger__row { grid-template-columns: 1fr auto; }
   .ledger__what { grid-column: 1 / -1; }
 }
@@ -480,7 +367,7 @@ a { color: inherit; }
 </head>
 <body>
 
-<a class="skip" href="#thesis">Skip to content</a>
+<a class="skip" href="#vision">Skip to content</a>
 
 <!-- ── Hero ─────────────────────────────────────────────────── -->
 <header class="hero" id="hero">
@@ -489,27 +376,26 @@ a { color: inherit; }
     <div class="wrap hero__bar">
       <p class="hero__mark">Two Minds AI Lab</p>
       <nav class="hero__nav" aria-label="Primary">
-        <a href="#thesis">Method</a>
-        <a href="#work">Work</a>
-        <a href="#public">Public</a>
+        <a href="#vision">Vision</a>
+        <a href="#rules">How</a>
+        <a href="#here">Here</a>
         <a href="https://github.com/two-minds-ai-lab">GitHub</a>
       </nav>
     </div>
     <div class="wrap hero__stage">
       <h1 class="display hero__headline">
-        <span>A model always</span>
-        <span>agrees with itself.</span>
+        <span>Two minds,</span>
+        <span>learning in public.</span>
       </h1>
     </div>
     <div class="wrap hero__foot">
-      <p class="hero__lede"><strong>So we stopped asking one.</strong> We build multi-agent systems where reasoning is contested before it is returned — one model proposes, one attacks, and the answer is whatever survives the argument.</p>
-      <dl class="trace">
-        <dt>Rounds</dt><dd>4</dd>
-        <dt>Proposer</dt><dd>committed</dd>
-        <dt>Critic</dt><dd>objected</dd>
-        <dt>Returned</dt><dd>revised, in two steps</dd>
+      <p class="hero__lede"><strong>One person and one model, working things out together.</strong> What we learn goes here as we learn it — the working-out included, not only the parts that came out clean.</p>
+      <dl class="pair">
+        <dt>Mind one</dt><dd>a person</dd>
+        <dt>Mind two</dt><dd>a model</dd>
+        <dt>Kept</dt><dd>the working-out</dd>
       </dl>
-      <a class="hero__hint" href="#exchange-title">Read the exchange</a>
+      <a class="hero__hint" href="#vision">Why we do it this way</a>
     </div>
   </div>
 
@@ -517,27 +403,26 @@ a { color: inherit; }
     <div class="wrap hero__bar">
       <p class="hero__mark">Two Minds AI Lab</p>
       <div class="hero__nav">
-        <span>Method</span>
-        <span>Work</span>
-        <span>Public</span>
+        <span>Vision</span>
+        <span>How</span>
+        <span>Here</span>
         <span>GitHub</span>
       </div>
     </div>
     <div class="wrap hero__stage">
       <p class="display hero__headline">
-        <span>A model always</span>
-        <span>agrees with itself.</span>
+        <span>Two minds,</span>
+        <span>learning in public.</span>
       </p>
     </div>
     <div class="wrap hero__foot">
-      <p class="hero__lede"><strong>So we stopped asking one.</strong> We build multi-agent systems where reasoning is contested before it is returned — one model proposes, one attacks, and the answer is whatever survives the argument.</p>
-      <dl class="trace">
-        <dt>Rounds</dt><dd>4</dd>
-        <dt>Proposer</dt><dd>committed</dd>
-        <dt>Critic</dt><dd>objected</dd>
-        <dt>Returned</dt><dd>revised, in two steps</dd>
+      <p class="hero__lede"><strong>One person and one model, working things out together.</strong> What we learn goes here as we learn it — the working-out included, not only the parts that came out clean.</p>
+      <dl class="pair">
+        <dt>Mind one</dt><dd>a person</dd>
+        <dt>Mind two</dt><dd>a model</dd>
+        <dt>Kept</dt><dd>the working-out</dd>
       </dl>
-      <span class="hero__hint">Read the exchange</span>
+      <span class="hero__hint">Why we do it this way</span>
     </div>
   </div>
 
@@ -546,108 +431,43 @@ a { color: inherit; }
 
 <main>
 
-  <!-- ── Thesis ─────────────────────────────────────────────── -->
-  <section class="thesis" id="thesis">
+  <!-- ── Vision ─────────────────────────────────────────────── -->
+  <section class="vision" id="vision">
     <div class="wrap">
-      <p class="eyebrow thesis__eyebrow">The method</p>
-      <p class="thesis__body">A single model cannot grade its own work. It has no way to separate an answer that is <em>correct</em> from one that is merely fluent — from the inside, the two feel identical. A second model, told to break the first, can.</p>
+      <p class="eyebrow vision__eyebrow">The vision</p>
+      <p class="vision__body">Almost everything written about working with AI arrives as a finished result with the learning taken out. The <em>result</em> is the least useful part of it.</p>
+      <p class="vision__body">So we keep the rest, and we publish it as we go.</p>
     </div>
   </section>
 
-  <!-- ── Exchange ───────────────────────────────────────────── -->
-  <section class="exchange" aria-labelledby="exchange-title">
-
-    <div class="exchange__head">
-      <div class="wrap">
-        <h2 class="display exchange__title" id="exchange-title">Disagreement is<br>the instrument</h2>
-        <p class="exchange__prompt">
-          <b>The question</b>
-          Is this migration safe to run against the production table?
-        </p>
-      </div>
-    </div>
-
-    <div class="exchange__floor">
-
-      <div class="side side--day">
-        <p class="eyebrow side__role">Mind A — Proposer</p>
-        <p class="side__mandate">Answer the question. Commit to a position.</p>
-
-        <div class="turn reveal">
-          <span class="turn__n" aria-hidden="true">01</span>
-          <p class="turn__text">Yes. The migration adds one nullable column. Postgres records that in the catalog without rewriting the table, so it returns in milliseconds no matter how many rows there are.</p>
-        </div>
-
-        <div class="turn reveal">
-          <span class="turn__n" aria-hidden="true">03</span>
-          <p class="turn__text">Granted — but the index drop is separable. Add the column now, then rebuild the index afterwards with <code>CONCURRENTLY</code>, which never takes the exclusive lock.</p>
-        </div>
-      </div>
-
-      <div class="side side--night">
-        <p class="eyebrow side__role">Mind B — Critic</p>
-        <p class="side__mandate">Find the case where that answer is wrong.</p>
-
-        <div class="turn reveal">
-          <span class="turn__n" aria-hidden="true">02</span>
-          <p class="turn__text">Not against this table. The same migration first drops a partial index on <code>status</code>. That is a full rebuild across forty million rows, holding an exclusive lock the entire time.</p>
-        </div>
-
-        <div class="turn reveal">
-          <span class="turn__n" aria-hidden="true">04</span>
-          <p class="turn__text">Then the answer was never “yes.” It is “yes, in two steps” — and shipping it as one step is exactly what takes the table down.</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="converge">
-      <svg class="converge__mark" viewBox="0 0 400 72" role="img" aria-label="Two paths meeting and continuing as one">
-        <path d="M2 4 L 200 48" fill="none" stroke="#ff9a2e" stroke-width="1.5"></path>
-        <path d="M398 4 L 200 48" fill="none" stroke="#8f81ff" stroke-width="1.5"></path>
-        <path d="M200 48 L 200 70" fill="none" stroke="#e3e7f4" stroke-width="1.5"></path>
-        <circle cx="200" cy="48" r="3.5" fill="#e3e7f4"></circle>
-      </svg>
-    </div>
-
-    <div class="verdict">
-      <div class="wrap">
-        <p class="eyebrow verdict__label">What survived</p>
-        <p class="verdict__text">Safe in two steps. Add the column now — nullable, no rewrite, no meaningful lock. Drop and rebuild the partial index on <code>status</code> as a separate change, <code>CONCURRENTLY</code>, off-peak.</p>
-        <p class="disclaimer">Illustrative exchange. Not a benchmark result.</p>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ── Work ───────────────────────────────────────────────── -->
-  <section class="work" id="work" aria-labelledby="work-title">
+  <!-- ── Rules ──────────────────────────────────────────────── -->
+  <section class="rules" id="rules" aria-labelledby="rules-title">
     <div class="wrap">
-      <p class="eyebrow section__eyebrow">What we work on</p>
-      <h2 class="display section__title" id="work-title">Three open problems</h2>
+      <p class="eyebrow section__eyebrow">What that commits us to</p>
+      <h2 class="display section__title" id="rules-title">Three rules</h2>
 
-      <div class="tracks">
-        <article class="track reveal">
-          <h3 class="track__name">Deliberation protocols</h3>
-          <p class="track__body">How many rounds, what mandate each side is given, and when to stop. Structure decides whether an argument converges or simply costs more.</p>
+      <div class="rules__set">
+        <article class="rule reveal">
+          <h3 class="rule__name">Show the working-out</h3>
+          <p class="rule__body">The notes, the dead ends, and the version that did not work, alongside whatever finally did.</p>
         </article>
-        <article class="track reveal">
-          <h3 class="track__name">Adversarial evaluation</h3>
-          <p class="track__body">Grading a model with a model that is rewarded for making it fail. Cheaper than human review, and considerably harder to game than a fixed rubric.</p>
+        <article class="rule reveal">
+          <h3 class="rule__name">Claim nothing unshipped</h3>
+          <p class="rule__body">Nothing here describes work that does not exist yet. That is why the list below is short.</p>
         </article>
-        <article class="track reveal">
-          <h3 class="track__name">Agent tooling</h3>
-          <p class="track__body">The unglamorous half. Transcripts a person can actually read, traces that replay, and budgets that stop the run when they say they will.</p>
+        <article class="rule reveal">
+          <h3 class="rule__name">Correct it in the open</h3>
+          <p class="rule__body">When we get something wrong, the correction lands here too, and the history keeps both.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ── Public ─────────────────────────────────────────────── -->
-  <section class="public" id="public" aria-labelledby="public-title">
+  <!-- ── Here ───────────────────────────────────────────────── -->
+  <section class="here" id="here" aria-labelledby="here-title">
     <div class="wrap">
       <p class="eyebrow section__eyebrow">In the open</p>
-      <h2 class="display section__title" id="public-title">What is public</h2>
+      <h2 class="display section__title" id="here-title">What is here</h2>
 
       <div class="ledger">
         <a class="ledger__row" href="https://github.com/two-minds-ai-lab/demo-repository">
@@ -657,7 +477,7 @@ a { color: inherit; }
         </a>
       </div>
 
-      <p class="public__note">The lab is early and this list is short on purpose. It holds what is genuinely published, not what is planned, and it grows as work ships.</p>
+      <p class="here__note">One repository, on day one. The list grows only when something real lands in it.</p>
     </div>
   </section>
 
@@ -709,8 +529,7 @@ a { color: inherit; }
   hero.addEventListener('pointermove', function (e) {
     if (!trackable()) { return; }
     var box = hero.getBoundingClientRect();
-    var x = ((e.clientX - box.left) / box.width) * 100;
-    setSeam(Math.min(88, Math.max(12, x)));
+    setSeam(Math.min(88, Math.max(12, ((e.clientX - box.left) / box.width) * 100)));
   });
 
   hero.addEventListener('pointerleave', function () {
@@ -722,7 +541,6 @@ a { color: inherit; }
     root.style.setProperty('--seam', '50%');
   });
 
-  /* Turns arrive one at a time, in the order they were argued. */
   var items = document.querySelectorAll('.reveal');
 
   if (reduced.matches || !('IntersectionObserver' in window)) {

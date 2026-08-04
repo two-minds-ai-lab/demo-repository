@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="Two Minds AI Lab — a model always agrees with itself, so we stopped asking one">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="Two Minds AI Lab — two minds, learning in public">
   <title>Two Minds AI Lab</title>
 
   <!-- The split carries its own ground, so the banner reads the
@@ -20,10 +20,10 @@
   <!-- The headline is set twice and clipped at the seam, so it
        inverts exactly where the two minds meet. -->
   <g font-family="Futura, 'Century Gothic', 'Avenir Next', 'Segoe UI', system-ui, sans-serif" font-size="76">
-    <text x="56" y="226" fill="#0e1118" clip-path="url(#dayHalf)">A MODEL ALWAYS</text>
-    <text x="56" y="226" fill="#e3e7f4" clip-path="url(#nightHalf)">A MODEL ALWAYS</text>
-    <text x="56" y="306" fill="#0e1118" clip-path="url(#dayHalf)">AGREES WITH ITSELF.</text>
-    <text x="56" y="306" fill="#e3e7f4" clip-path="url(#nightHalf)">AGREES WITH ITSELF.</text>
+    <text x="56" y="226" fill="#0e1118" clip-path="url(#dayHalf)">TWO MINDS,</text>
+    <text x="56" y="226" fill="#e3e7f4" clip-path="url(#nightHalf)">TWO MINDS,</text>
+    <text x="56" y="306" fill="#0e1118" clip-path="url(#dayHalf)">LEARNING IN PUBLIC.</text>
+    <text x="56" y="306" fill="#e3e7f4" clip-path="url(#nightHalf)">LEARNING IN PUBLIC.</text>
   </g>
 
   <g font-family="Futura, 'Century Gothic', 'Avenir Next', 'Segoe UI', system-ui, sans-serif" font-size="19" letter-spacing="4.6">
@@ -34,8 +34,8 @@
   <rect x="639.5" y="0" width="1" height="400" fill="url(#seam)"/>
 
   <g font-family="ui-monospace, 'SF Mono', Consolas, monospace" font-size="15" letter-spacing="1.4">
-    <text x="56" y="358" fill="#4a5060" clip-path="url(#dayHalf)">So we stopped asking one.</text>
-    <text x="56" y="358" fill="#98a1bd" clip-path="url(#nightHalf)">So we stopped asking one.</text>
-    <text x="1224" y="84" text-anchor="end" fill="#98a1bd">MULTI-AGENT SYSTEMS</text>
+    <text x="56" y="358" fill="#4a5060" clip-path="url(#dayHalf)">A person and a model, working things out.</text>
+    <text x="56" y="358" fill="#98a1bd" clip-path="url(#nightHalf)">A person and a model, working things out.</text>
+    <text x="1224" y="84" text-anchor="end" fill="#98a1bd">LEARNING IN THE OPEN</text>
   </g>
 </svg>

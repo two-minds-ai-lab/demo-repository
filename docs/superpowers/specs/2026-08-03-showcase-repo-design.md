@@ -11,8 +11,14 @@ organization profile page.
 
 ## Positioning
 
-Two Minds AI Lab is an AI research lab focused on multi-agent systems and human+AI
-collaboration. All copy derives from that positioning. No placeholder text ships.
+Two Minds AI Lab is one person and one model learning together, in public. The site exists
+to state that vision and to show only what actually exists. All copy derives from that
+positioning. No placeholder text ships, and nothing describes work that has not shipped.
+
+Superseded (2026-08-03): an earlier pass positioned the lab around adversarial multi-agent
+deliberation, with an invented research agenda and an illustrative debate transcript. That
+claimed an agenda the lab had not earned, and it was cut. Kept here because the site's own
+first rule is to show the working-out.
 
 ## Visual Direction — "Two Minds"
 
@@ -36,11 +42,11 @@ semantic HTML.
 
 Sections, in order:
 
-1. Split hero — thesis statement, lab name, primary nav.
-2. Capability triptych — research / tooling / open source.
-3. Convergence panel — one prompt resolved by two agents whose outputs converge.
-4. Artifacts strip — repository/output index.
-5. Footer — contact and links.
+1. Split hero — the vision in one line, lab name, primary nav, and the two minds named.
+2. Vision — one held statement on paper. The whole point of the site.
+3. Three rules — what the vision commits the lab to. Promises, not results.
+4. What is here — the repositories that actually exist. Nothing else goes in this list.
+5. Footer — links and license.
 
 Seam mechanic: two stacked layers, the upper one inset via `clip-path`. Divider position
 is driven by pointer X on desktop with a scroll-linked default. Under 768px the layout
