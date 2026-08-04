@@ -38,7 +38,7 @@ Then open <http://localhost:8000>.
 | `index.html` | The whole site — markup, styles, and behaviour in one file |
 | `assets/banner.svg` | The banner at the top of this README |
 | `.github/workflows/proof-html.yml` | Checks every link and reference in the rendered HTML |
-| `.github/workflows/auto-assign.yml` | Assigns a reviewer when a pull request opens |
+| `.github/workflows/auto-assign.yml` | Assigns an owner when an issue opens |
 | `docs/superpowers/specs/` | The design spec the site was built from |
 
 ## How the page is built

@@ -1,15 +1,15 @@
 name: Auto Assign
 on:
+  # pozil/auto-assign-issue@v1 reads issue context only. It was also
+  # wired to pull_request, where that context does not exist, so every
+  # pull request failed the run.
   issues:
-    types: [opened]
-  pull_request:
     types: [opened]
 jobs:
   run:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      pull-requests: write
     steps:
     - name: 'Auto-assign issue'
       uses: pozil/auto-assign-issue@v1
