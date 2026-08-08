@@ -36,6 +36,9 @@ the history keeps both.
 | --- | --- |
 | `index.html` | The whole page — markup and styles in one file, no script |
 | `assets/banner.svg` | The banner above |
+| `bill_analysis.py` | Deterministic recurring-bill analysis and report formatting |
+| `data/bills.json` | Six-bill sample dataset with current and previous statements |
+| `tests/` | Baseline pytest coverage for the bill analysis |
 | `.github/workflows/` | Checks the rendered HTML, and assigns an owner to new issues |
 | `docs/superpowers/specs/` | The design spec, including the direction that was abandoned |
 
@@ -50,6 +53,20 @@ python3 -m http.server 8000
 ```
 
 Then open <http://localhost:8000>.
+
+## Run the bill analysis
+
+The Stage 0 bill analyzer uses only Python's standard library:
+
+```bash
+python bill_analysis.py
+```
+
+Run its tests with:
+
+```bash
+python -m pytest
+```
 
 ## Notes on the build
 
