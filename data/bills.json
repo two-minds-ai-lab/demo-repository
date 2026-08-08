@@ -1,0 +1,160 @@
+{
+  "today": "2026-08-04",
+  "lookahead_days": 7,
+  "comparison_rules": {
+    "percentage_change_threshold": 15,
+    "minimum_absolute_change": 10.0
+  },
+  "bills": [
+    {
+      "bill_id": "chase_visa",
+      "name": "Chase Visa",
+      "category": "credit_card",
+      "recurrence": {
+        "frequency": "monthly",
+        "usual_due_day": 7
+      },
+      "current_statement": {
+        "statement_month": "2026-08",
+        "amount_due": 325.4,
+        "amount_type": "statement_balance",
+        "due_date": "2026-08-07",
+        "status": "unpaid"
+      },
+      "history": [
+        {
+          "statement_month": "2026-07",
+          "amount_due": 280.0,
+          "due_date": "2026-07-07",
+          "status": "paid",
+          "paid_date": "2026-07-07"
+        }
+      ]
+    },
+    {
+      "bill_id": "pse_electricity",
+      "name": "PSE Electricity",
+      "category": "utilities",
+      "recurrence": {
+        "frequency": "monthly",
+        "usual_due_day": 9
+      },
+      "current_statement": {
+        "statement_month": "2026-08",
+        "amount_due": 142.5,
+        "amount_type": "amount_due",
+        "due_date": "2026-08-09",
+        "status": "unpaid"
+      },
+      "history": [
+        {
+          "statement_month": "2026-07",
+          "amount_due": 95.0,
+          "due_date": "2026-07-09",
+          "status": "paid",
+          "paid_date": "2026-07-09"
+        }
+      ]
+    },
+    {
+      "bill_id": "citi_mastercard",
+      "name": "Citi Mastercard",
+      "category": "credit_card",
+      "recurrence": {
+        "frequency": "monthly",
+        "usual_due_day": 10
+      },
+      "current_statement": {
+        "statement_month": "2026-08",
+        "amount_due": 40.0,
+        "amount_type": "statement_balance",
+        "due_date": "2026-08-10",
+        "status": "unpaid"
+      },
+      "history": [
+        {
+          "statement_month": "2026-07",
+          "amount_due": 90.0,
+          "due_date": "2026-07-10",
+          "status": "paid",
+          "paid_date": "2026-07-10"
+        }
+      ]
+    },
+    {
+      "bill_id": "t_mobile",
+      "name": "T-Mobile",
+      "category": "mobile",
+      "recurrence": {
+        "frequency": "monthly",
+        "usual_due_day": 12
+      },
+      "current_statement": {
+        "statement_month": "2026-08",
+        "amount_due": 70.0,
+        "amount_type": "amount_due",
+        "due_date": "2026-08-12",
+        "status": "unpaid"
+      },
+      "history": [
+        {
+          "statement_month": "2026-07",
+          "amount_due": 100.0,
+          "due_date": "2026-07-12",
+          "status": "paid",
+          "paid_date": "2026-07-12"
+        }
+      ]
+    },
+    {
+      "bill_id": "american_express",
+      "name": "American Express",
+      "category": "credit_card",
+      "recurrence": {
+        "frequency": "monthly",
+        "usual_due_day": 14
+      },
+      "current_statement": {
+        "statement_month": "2026-08",
+        "amount_due": 120.0,
+        "amount_type": "statement_balance",
+        "due_date": "2026-08-14",
+        "status": "unpaid"
+      },
+      "history": [
+        {
+          "statement_month": "2026-07",
+          "amount_due": 105.0,
+          "due_date": "2026-07-14",
+          "status": "paid",
+          "paid_date": "2026-07-14"
+        }
+      ]
+    },
+    {
+      "bill_id": "xfinity_broadband",
+      "name": "Xfinity Broadband",
+      "category": "broadband",
+      "recurrence": {
+        "frequency": "monthly",
+        "usual_due_day": 18
+      },
+      "current_statement": {
+        "statement_month": "2026-08",
+        "amount_due": 65.0,
+        "amount_type": "amount_due",
+        "due_date": "2026-08-18",
+        "status": "unpaid"
+      },
+      "history": [
+        {
+          "statement_month": "2026-07",
+          "amount_due": 63.5,
+          "due_date": "2026-07-18",
+          "status": "paid",
+          "paid_date": "2026-07-18"
+        }
+      ]
+    }
+  ]
+}
