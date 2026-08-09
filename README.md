@@ -111,35 +111,88 @@ User question
 Bill Manager receives its instructions and tool schemas
     |
     v
-Model chooses one or both tools
+Model chooses one or more tools
     |
     +--> get_bill_due_dates
     |        |
     |        +--> bills.json --> deterministic Python calculations
     |
     +--> get_bill_change_analysis
+    |        |
+    |        +--> bills.json --> deterministic Python calculations
+    |
+    +--> search_bill_records
              |
-             +--> bills.json --> deterministic Python calculations
+             +--> BM25 + Qwen3 embeddings --> ranked bill evidence
     |
     v
-Tool results return to the model as JSON
+Tool results return to the application
     |
     v
-Model either requests another tool or writes the final answer
+Deterministic validation and formatting
+    |
+    v
+Final answer
 ```
 
-The model decides which tools to call and how to explain the result. Python
-remains responsible for all bill dates, totals, and anomaly calculations.
+The model decides which information is needed. Python remains responsible for
+retrieval safety, bill dates, totals, anomaly calculations, and factual output.
 For local Phi-4 Mini, the adapter accepts both native tool calls and the
 model's JSON-text tool-call format. If Phi-4 omits tool metadata, the adapter
-runs both read-only bill tools. Phi-4 uses the deterministic Python formatter
-for the final response so a small local model cannot alter dates or totals.
+uses intent-coverage rules to select the required read-only tools. Phi-4 uses
+deterministic Python formatters so a small local model cannot alter retrieved
+evidence, dates, or totals.
 
-## Partner engineering guidance for local Phi-4
+## Current mental model
+
+```text
+User language
+     |
+     v
+Phi-4: understand intent and propose tools
+     |
+     v
+Python intent coverage: enforce required read-only tools
+     |
+     +--> Due-date tool ------> bills.json ------> date and total logic
+     |
+     +--> Comparison tool ----> bills.json ------> anomaly logic
+     |
+     +--> Retrieval tool
+             |
+             +--> BM25 ----------------> exact words and identifiers
+             |
+             +--> Qwen3 Embedding -----> meaning and synonyms
+                           |
+                           v
+                 Reciprocal Rank Fusion
+     |
+     v
+Exact-value validation and deterministic formatting
+     |
+     v
+Factual response
+```
+
+Responsibilities stay deliberately separate:
+
+| Component | Responsibility |
+| --- | --- |
+| Phi-4 Mini | Understand the question and suggest tools |
+| Python coverage rules | Run required tools and suppress unrelated selections |
+| BM25 | Match exact providers, amounts, dates, and identifiers |
+| Qwen3 Embedding | Match concepts such as “power bill” and “home internet” |
+| Reciprocal Rank Fusion | Combine independent rankings without mixing scores |
+| Bill analysis code | Calculate dates, totals, changes, and classifications |
+| Deterministic formatter | Produce the final factual response |
+
+## Local Phi-4 lessons
 
 The local Phi-4 integration exposed several differences between advertised
-tool support and reliable application behavior. Keep these lessons in mind
-when adding another local model or tool-calling workflow.
+tool support and reliable application behavior.
+
+**Quick takeaway:** use Phi-4 to understand intent, but let Python control which
+tools are allowed and how financial facts are rendered.
 
 ### Pitfalls observed
 
@@ -149,10 +202,16 @@ returned the requested calls as JSON inside ordinary assistant text instead of
 populating the structured `tool_calls` field. The standard Agents SDK loop
 therefore treated the response as a final answer and did not execute the tools.
 
-**Tool selection varied between identical runs.** For the same complete-summary
-question, Phi-4 sometimes selected both tools, sometimes selected only the
-due-date tool, and sometimes selected no tool. A prompt saying "use both tools"
-was helpful but was not a dependable contract.
+**Tool selection varied between identical runs.** For the same question,
+Phi-4 sometimes selected every required tool, sometimes selected only one, and
+sometimes selected no tool. A prompt saying which tools to use was helpful but
+was not a dependable contract.
+
+**Phi-4 sometimes selected too many tools.** For “which bill is power bill,”
+the model selected retrieval, due-date, and comparison tools. The facts were
+correct, but the answer contained unrelated information. Explicit intent now
+defines the allowed tool set, so retrieval-only questions suppress due-date
+and comparison tools.
 
 **Correct tool data did not guarantee correct final prose.** When the model was
 asked to rewrite authoritative JSON, it invented dates, changed billing
@@ -176,8 +235,8 @@ template. Ollama must be running and new enough to support the model.
 
 1. The provider adapter isolates Phi-4 behavior from OpenAI and Azure OpenAI.
 2. The parser accepts native `tool_calls` and JSON-text tool requests.
-3. Intent coverage ensures a complete summary always runs both bill tools.
-4. If Phi-4 omits tool metadata, both read-only tools run as a safe fallback.
+3. Intent coverage enforces required tools and suppresses unrelated tools.
+4. If Phi-4 omits tool metadata, only intent-required read-only tools run.
 5. Python owns loading, date handling, totals, comparisons, and classifications.
 6. Phi-4 tool results use deterministic formatting instead of model rewriting.
 7. Tests assert known dates, totals, tool coverage, and provider configuration.
@@ -188,7 +247,7 @@ that send email, update bills, move money, delete data, or perform any other
 write. Those tools require explicit structured selection, validation, and
 usually user confirmation.
 
-### Guidance for the next integration
+### Checklist for future integrations
 
 **Treat prompts as guidance, not enforcement.** Enforce required tool coverage
 in code and validate the tool result before using it.
@@ -230,7 +289,7 @@ the local provider applies only the compatibility safeguards it needs.
 The agent is primarily a natural-language router and conversation layer. It:
 
 - understands different ways of asking the same billing question;
-- chooses the due-date tool, comparison tool, or both;
+- chooses due-date, comparison, retrieval, or combined tool paths;
 - supports follow-up questions without requiring command-specific syntax;
 - combines multiple tool results into one user-facing response; and
 - provides a path for adding Gmail ingestion, reminders, updates, and other
@@ -254,6 +313,124 @@ The design rule is:
 
 > The model decides what information is needed; deterministic code decides
 > what is true.
+
+## Semantic-search experiment
+
+The project uses `qwen3-embedding:4b` as its free local embedding model:
+
+```powershell
+ollama pull qwen3-embedding:4b
+python bill_embeddings.py "Find my power bill"
+```
+
+`bill_embeddings.py` converts each structured bill into searchable text,
+generates 2,560-dimensional vectors through Ollama, and ranks bills using
+cosine similarity. Phi-4 remains responsible for language and routing;
+Qwen3 Embedding is responsible only for semantic similarity.
+
+The embedding CLI remains useful for isolated evaluation. Production agent
+search uses it only through hybrid retrieval, alongside the BM25 baseline.
+
+### BM25 and hybrid retrieval
+
+`bill_retrieval.py` provides three comparable modes:
+
+```powershell
+python bill_retrieval.py --mode bm25 "Chase Visa"
+python bill_retrieval.py --mode semantic "Find my power bill"
+python bill_retrieval.py --mode hybrid "Find my power bill"
+```
+
+BM25 runs through an in-memory SQLite FTS5 index and handles exact names,
+amounts, dates, and identifiers. Semantic retrieval handles synonyms and
+natural-language descriptions. Hybrid retrieval combines their ranked lists
+with Reciprocal Rank Fusion rather than mixing incompatible raw score scales.
+
+Amounts such as `142.40` and ISO dates such as `2026-08-10` are handled as
+exact structured filters before token search. This prevents the FTS tokenizer
+from splitting a decimal into broad matches such as `142` and `40`. Hybrid
+search also fails closed for an unmatched exact amount or date instead of
+returning a semantically similar but financially incorrect result.
+
+Hybrid retrieval is exposed to the Bill Manager as the read-only
+`search_bill_records` tool. Phi-4 routing enforces this tool for find, search,
+source, exact amount, and exact date questions. The retrieval layer still
+fails closed when an exact financial value has no match.
+
+### Retrieval pitfalls and improvements
+
+| Pitfall observed | Improvement made |
+| --- | --- |
+| BM25 misses synonyms such as “power bill” for PSE Electricity | Added Qwen3 semantic embeddings |
+| Embeddings may weaken exact names, amounts, or dates | Kept BM25 and structured exact filters |
+| BM25 and cosine scores use unrelated scales | Combined ranks with Reciprocal Rank Fusion |
+| SQLite split `142.40` into `142` and `40` | Detect amounts before tokenization and match exact decimals |
+| Semantic search could return a close result for a nonexistent amount | Hybrid search fails closed for unmatched exact values |
+| Phi-4 may omit or partially select retrieval tools | Added deterministic intent-coverage rules |
+| Phi-4 may select unrelated extra tools | Explicit intent defines and limits the allowed tool set |
+| Follow-up tools returned facts for every bill instead of the retrieved match | Compound questions join due/change details to retrieval rank 1 |
+| Phi-4 may rewrite correct evidence incorrectly | Added deterministic retrieval formatting |
+| One successful query can hide unstable ranking | Added regression tests and `OBSERVATIONS.md` evidence |
+
+### Improvements still needed
+
+- Replace the six synthetic search documents with representative bill emails
+  and statements.
+- Add a fixed query-evaluation set with Recall@3, MRR, latency, and failure
+  categories.
+- Persist the FTS and vector indexes when the document collection grows.
+- Add source IDs and citations before retrieving Gmail messages.
+- Define explicit approval boundaries before introducing any write-capable
+  email, reminder, or bill-update tool.
+
+The current implementation proves the routing and ranking architecture. It
+does not yet prove retrieval quality over a realistic bill-document corpus.
+
+### Cross-tool joins
+
+A multi-tool answer is not correct merely because each individual tool is
+correct. Tool results must be connected to the same entity.
+
+The issue appeared with this question:
+
+```text
+Which bill is the power bill, and how much is due only for rank 1?
+```
+
+Before the fix:
+
+```text
+Retrieval tool → PSE Electricity ranked first
+Due-date tool  → Chase, PSE, and Citi
+Final answer   → all three due bills and the $507.90 total
+```
+
+The due-date output was valid by itself, but it did not answer the follow-up
+about the retrieved bill.
+
+The fixed flow is:
+
+```text
+Hybrid retrieval
+    ↓
+Rank 1 bill_id: pse_electricity
+    ↓
+Join calculated details by bill_id
+    ├─ Amount due: $142.50
+    ├─ Due date: 2026-08-09
+    └─ Change: +$47.50 (+50.0%)
+    ↓
+Targeted deterministic response
+```
+
+Cross-tool join rules:
+
+1. Use stable IDs such as `bill_id`; never join on generated names or prose.
+2. Treat retrieval rank as selection only when the question requests it.
+3. Apply due-date or comparison details only to the selected IDs.
+4. If retrieval has no match, do not expose unrelated tool results.
+5. Keep formatting deterministic after the join.
+6. Add regression tests for wrong names, no matches, and extra tool data.
 
 ## Notes on the build
 
