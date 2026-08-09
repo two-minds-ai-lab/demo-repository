@@ -37,6 +37,9 @@ the history keeps both.
 | `index.html` | The whole page — markup and styles in one file, no script |
 | `assets/banner.svg` | The banner above |
 | `bill_analysis.py` | Deterministic recurring-bill analysis and report formatting |
+| `bill_agent.py` | Bill Manager agent and its two function tools |
+| `bill_agent_provider.py` | OpenAI, Azure OpenAI, and local Phi-4 configuration |
+| `bill_agent_tools.py` | Adapters from agent tools to deterministic bill calculations |
 | `data/bills.json` | Six-bill sample dataset with current and previous statements |
 | `tests/` | Baseline pytest coverage for the bill analysis |
 | `.github/workflows/` | Checks the rendered HTML, and assigns an owner to new issues |
@@ -67,6 +70,66 @@ Run its tests with:
 ```bash
 python -m pytest
 ```
+
+## Run the Bill Manager agent
+
+Install the OpenAI Agents SDK dependency:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Select a model provider with `BILL_AGENT_PROVIDER`:
+
+| Value | Backend |
+| --- | --- |
+| `openai` | Public OpenAI API |
+| `azure` | Azure OpenAI deployment using Azure credits |
+| `phi4` | Local Microsoft Phi-4 model through Ollama |
+
+Example using Azure OpenAI:
+
+```powershell
+$env:BILL_AGENT_PROVIDER="azure"
+$env:AZURE_OPENAI_API_KEY="your-azure-key"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com"
+$env:AZURE_OPENAI_DEPLOYMENT="your-deployment-name"
+python bill_agent.py "Give me a complete bill summary."
+```
+
+See [`AGENT_SETUP.md`](AGENT_SETUP.md) for every provider option.
+
+## How the agent loop works
+
+`Runner.run_sync()` owns the loop; the application does not need a manual
+`while` loop:
+
+```text
+User question
+    |
+    v
+Bill Manager receives its instructions and tool schemas
+    |
+    v
+Model chooses one or both tools
+    |
+    +--> get_bill_due_dates
+    |        |
+    |        +--> bills.json --> deterministic Python calculations
+    |
+    +--> get_bill_change_analysis
+             |
+             +--> bills.json --> deterministic Python calculations
+    |
+    v
+Tool results return to the model as JSON
+    |
+    v
+Model either requests another tool or writes the final answer
+```
+
+The model decides which tools to call and how to explain the result. Python
+remains responsible for all bill dates, totals, and anomaly calculations.
 
 ## Notes on the build
 

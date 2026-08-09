@@ -1,0 +1,60 @@
+# Bill Manager agent setup
+
+The Bill Manager uses two deterministic tools:
+
+- `get_bill_due_dates` returns upcoming and later-this-month bills.
+- `get_bill_change_analysis` returns monthly totals and bill anomalies.
+
+## Install
+
+On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+## Public OpenAI
+
+```powershell
+$env:BILL_AGENT_PROVIDER="openai"
+$env:OPENAI_API_KEY="your-api-key"
+$env:OPENAI_MODEL="gpt-4.1-mini"
+python bill_agent.py "Give me a complete bill summary."
+```
+
+## Azure OpenAI
+
+Create a model deployment in Microsoft Foundry, then configure:
+
+```powershell
+$env:BILL_AGENT_PROVIDER="azure"
+$env:AZURE_OPENAI_API_KEY="your-azure-key"
+$env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com"
+$env:AZURE_OPENAI_DEPLOYMENT="your-deployment-name"
+$env:AZURE_OPENAI_API="responses"
+python bill_agent.py "Give me a complete bill summary."
+```
+
+Set `AZURE_OPENAI_API` to `chat_completions` if the deployment does not
+support the Responses API.
+
+## Local Microsoft Phi-4
+
+Install [Ollama](https://ollama.com/), then run:
+
+```powershell
+ollama pull phi4-mini
+$env:BILL_AGENT_PROVIDER="phi4"
+python bill_agent.py "Give me a complete bill summary."
+```
+
+Phi-4 runs locally without a cloud API key. The selected model must support
+tool calling.
+
+The `--provider` option overrides `BILL_AGENT_PROVIDER` for one command:
+
+```powershell
+python bill_agent.py --provider azure "Which bills are due soon?"
+```
