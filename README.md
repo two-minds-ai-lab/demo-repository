@@ -130,6 +130,130 @@ Model either requests another tool or writes the final answer
 
 The model decides which tools to call and how to explain the result. Python
 remains responsible for all bill dates, totals, and anomaly calculations.
+For local Phi-4 Mini, the adapter accepts both native tool calls and the
+model's JSON-text tool-call format. If Phi-4 omits tool metadata, the adapter
+runs both read-only bill tools. Phi-4 uses the deterministic Python formatter
+for the final response so a small local model cannot alter dates or totals.
+
+## Partner engineering guidance for local Phi-4
+
+The local Phi-4 integration exposed several differences between advertised
+tool support and reliable application behavior. Keep these lessons in mind
+when adding another local model or tool-calling workflow.
+
+### Pitfalls observed
+
+**OpenAI compatibility did not guarantee OpenAI tool-call semantics.** Ollama's
+OpenAI-compatible endpoint accepted the tool schemas, but Phi-4 Mini sometimes
+returned the requested calls as JSON inside ordinary assistant text instead of
+populating the structured `tool_calls` field. The standard Agents SDK loop
+therefore treated the response as a final answer and did not execute the tools.
+
+**Tool selection varied between identical runs.** For the same complete-summary
+question, Phi-4 sometimes selected both tools, sometimes selected only the
+due-date tool, and sometimes selected no tool. A prompt saying "use both tools"
+was helpful but was not a dependable contract.
+
+**Correct tool data did not guarantee correct final prose.** When the model was
+asked to rewrite authoritative JSON, it invented dates, changed billing
+periods, and confused current and previous amounts. This is unacceptable for
+financial information even when the underlying calculations are correct.
+
+**The model supplied its own unrelated time context.** Before receiving tool
+results, one run claimed the current date was in March even though
+`bills.json` specified August 4, 2026. Dates must come from application data,
+not model memory or assumptions.
+
+**The local endpoint still required an API-key value.** Ollama does not validate
+a cloud key, but the OpenAI client requires a non-empty `api_key` parameter.
+The adapter uses the harmless local placeholder `ollama`.
+
+**Model and runtime versions matter.** This project uses `phi4-mini`, not the
+larger `phi4`, because Phi-4 Mini has the appropriate Ollama tool-calling
+template. Ollama must be running and new enough to support the model.
+
+### Safeguards implemented
+
+1. The provider adapter isolates Phi-4 behavior from OpenAI and Azure OpenAI.
+2. The parser accepts native `tool_calls` and JSON-text tool requests.
+3. Intent coverage ensures a complete summary always runs both bill tools.
+4. If Phi-4 omits tool metadata, both read-only tools run as a safe fallback.
+5. Python owns loading, date handling, totals, comparisons, and classifications.
+6. Phi-4 tool results use deterministic formatting instead of model rewriting.
+7. Tests assert known dates, totals, tool coverage, and provider configuration.
+
+The read-only fallback is safe for this project because neither tool changes
+state. Do not automatically execute missing or ambiguous tool calls for tools
+that send email, update bills, move money, delete data, or perform any other
+write. Those tools require explicit structured selection, validation, and
+usually user confirmation.
+
+### Guidance for the next integration
+
+**Treat prompts as guidance, not enforcement.** Enforce required tool coverage
+in code and validate the tool result before using it.
+
+**Keep deterministic work outside the model.** Dates, money, thresholds,
+sorting, status transitions, and identifiers belong in typed application code.
+Use the model for intent recognition and explanation only where variation is
+safe.
+
+**Test the raw provider response first.** Before connecting an agent framework,
+send one request directly to the provider with tool schemas and inspect whether
+calls appear in `tool_calls`, plain text, or another provider-specific field.
+
+**Test repeated runs, not one successful demo.** Local small models may choose
+different tools for identical prompts. Run the same routing test several times
+and test partial, missing, malformed, and duplicate calls.
+
+**Define a fallback policy per tool.** Read-only lookup tools may allow a safe,
+bounded fallback. Any side-effecting tool should fail closed rather than guess.
+
+**Validate final answers against tool output.** For high-stakes domains,
+prefer templates or structured rendering. If model-written prose is required,
+add schema validation and fact checks before displaying it.
+
+**Keep provider configuration explicit.** Pin dependency versions, document the
+model name and endpoint, and provide a health check such as:
+
+```powershell
+ollama --version
+ollama list
+Invoke-RestMethod http://localhost:11434/api/tags
+```
+
+This design lets the cloud providers use the standard Agents SDK loop while
+the local provider applies only the compatibility safeguards it needs.
+
+## Where the agent adds value
+
+The agent is primarily a natural-language router and conversation layer. It:
+
+- understands different ways of asking the same billing question;
+- chooses the due-date tool, comparison tool, or both;
+- supports follow-up questions without requiring command-specific syntax;
+- combines multiple tool results into one user-facing response; and
+- provides a path for adding Gmail ingestion, reminders, updates, and other
+  tools without building a separate command for every request.
+
+The agent is deliberately not the source of truth. Deterministic Python owns:
+
+- reading `bills.json`;
+- date-window and payment-status logic;
+- money calculations;
+- monthly comparisons and anomaly thresholds; and
+- reliable formatting where model rewriting could alter facts.
+
+For the current small set of fixed questions, an agent is optional. A normal
+CLI with explicit commands could produce the same calculations more cheaply
+and predictably. The agent becomes worthwhile when users ask varied questions,
+need conversational follow-ups, or when the system has enough tools that
+intent-based routing is simpler than exposing every operation directly.
+
+The design rule is:
+
+> The model decides what information is needed; deterministic code decides
+> what is true.
 
 ## Notes on the build
 
