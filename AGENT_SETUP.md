@@ -63,3 +63,36 @@ The `--provider` option overrides `BILL_AGENT_PROVIDER` for one command:
 ```powershell
 python bill_agent.py --provider azure "Which bills are due soon?"
 ```
+
+## Local semantic-search experiment
+
+Install the dedicated embedding model:
+
+```powershell
+ollama pull qwen3-embedding:4b
+python bill_embeddings.py "Find my power bill"
+```
+
+The embedding search covers the existing six structured bills. The Bill
+Manager exposes hybrid retrieval through its read-only `search_bill_records`
+tool.
+
+Compare retrieval modes:
+
+```powershell
+python bill_retrieval.py --mode bm25 "Chase Visa"
+python bill_retrieval.py --mode semantic "Find my power bill"
+python bill_retrieval.py --mode hybrid "Find my power bill"
+```
+
+Hybrid retrieval combines BM25 and Qwen3 rankings with Reciprocal Rank Fusion.
+Raw BM25 and cosine scores are not mixed because they use different scales.
+
+Run retrieval through the agent:
+
+```powershell
+$env:BILL_AGENT_PROVIDER="phi4"
+python bill_agent.py "Find my power bill"
+python bill_agent.py "Which bill is 142.50?"
+python bill_agent.py "Find my power bill and tell me whether it changed."
+```
