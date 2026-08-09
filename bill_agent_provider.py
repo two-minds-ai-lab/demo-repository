@@ -18,6 +18,8 @@ class BillAgentRuntime:
     model_name: str
     model: object
     tracing_disabled: bool
+    base_url: str | None = None
+    api_key: str | None = None
 
 
 def _required(environ, name, provider):
@@ -107,4 +109,6 @@ def create_bill_agent_runtime(provider=None, environ=None):
         model_name=model_name,
         model=model,
         tracing_disabled=True,
+        base_url=base_url,
+        api_key=api_key,
     )

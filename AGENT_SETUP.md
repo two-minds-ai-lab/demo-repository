@@ -51,7 +51,12 @@ python bill_agent.py "Give me a complete bill summary."
 ```
 
 Phi-4 runs locally without a cloud API key. The selected model must support
-tool calling.
+tool calling. The local adapter also handles Phi-4 Mini versions that emit
+tool requests as JSON text instead of native OpenAI-compatible `tool_calls`.
+If a local model omits tool metadata, the adapter safely runs both read-only
+bill tools. Because small local models can distort dates or totals while
+rewriting tool output, Phi-4 answers use the deterministic Python formatter
+after tool selection.
 
 The `--provider` option overrides `BILL_AGENT_PROVIDER` for one command:
 
