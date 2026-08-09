@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trustworthy Bill Intelligence</title>
+  <style>
+    :root {
+      --navy: #071b2d;
+      --blue: #1276d2;
+      --cyan: #28c2d1;
+      --green: #45c486;
+      --amber: #f0ad4e;
+      --red: #ea6a66;
+      --ink: #102536;
+      --muted: #5e7180;
+      --paper: #f4f8fb;
+      --white: #fff;
+      --line: #d8e4ec;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: var(--navy);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: clamp(28px, 5vw, 72px);
+      background:
+        radial-gradient(circle at 92% 8%, rgba(40, 194, 209, .14), transparent 28%),
+        linear-gradient(135deg, #fff 0%, var(--paper) 100%);
+      position: absolute;
+      inset: 0;
+      overflow: auto;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      animation: enter .25s ease-out;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .slide.dark {
+      color: var(--white);
+      background:
+        radial-gradient(circle at 82% 16%, rgba(40, 194, 209, .22), transparent 30%),
+        linear-gradient(145deg, #061726, #0b2c45 68%, #10465e);
+    }
+
+    .kicker {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: clamp(13px, 1.3vw, 18px);
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .dark .kicker { color: #6de0e8; }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 1050px;
+      margin-bottom: 22px;
+      font-size: clamp(42px, 7vw, 92px);
+      line-height: .98;
+      letter-spacing: -.045em;
+    }
+
+    h2 {
+      max-width: 1100px;
+      margin-bottom: 24px;
+      font-size: clamp(31px, 4.7vw, 62px);
+      line-height: 1.04;
+      letter-spacing: -.035em;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: clamp(18px, 2vw, 27px);
+      line-height: 1.15;
+    }
+
+    p, li {
+      font-size: clamp(17px, 1.8vw, 25px);
+      line-height: 1.42;
+    }
+
+    .lead {
+      max-width: 1000px;
+      color: var(--muted);
+      font-size: clamp(22px, 2.7vw, 36px);
+      line-height: 1.3;
+    }
+
+    .dark .lead { color: #c8dce8; }
+
+    .tag {
+      display: inline-block;
+      margin: 6px 8px 0 0;
+      padding: 8px 13px;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .08);
+      color: #e8f5f8;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      width: 100%;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      padding: clamp(18px, 2.4vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 12px 36px rgba(18, 57, 83, .08);
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font-size: clamp(15px, 1.45vw, 21px);
+    }
+
+    .card p:last-child { margin-bottom: 0; }
+
+    .accent-blue { border-top: 7px solid var(--blue); }
+    .accent-cyan { border-top: 7px solid var(--cyan); }
+    .accent-green { border-top: 7px solid var(--green); }
+    .accent-amber { border-top: 7px solid var(--amber); }
+    .accent-red { border-top: 7px solid var(--red); }
+
+    .metric {
+      display: block;
+      color: var(--blue);
+      font-size: clamp(36px, 5vw, 68px);
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .flow {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 10px;
+      margin: auto 0;
+    }
+
+    .node {
+      flex: 1;
+      min-width: 0;
+      padding: 18px 14px;
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      background: var(--white);
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(18, 57, 83, .08);
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--ink);
+      font-size: clamp(17px, 1.7vw, 24px);
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: clamp(13px, 1.2vw, 17px);
+      line-height: 1.35;
+    }
+
+    .arrow {
+      align-self: center;
+      color: var(--blue);
+      font-size: clamp(24px, 3vw, 43px);
+      font-weight: 800;
+    }
+
+    .stack {
+      display: grid;
+      grid-template-columns: 1fr 1.45fr 1fr;
+      gap: 20px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .rail {
+      display: grid;
+      gap: 11px;
+    }
+
+    .rail .node { border-left: 7px solid var(--blue); }
+    .rail.right .node { border-left-color: var(--green); }
+
+    .core {
+      padding: 32px;
+      border-radius: 24px;
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+      box-shadow: 0 18px 45px rgba(7, 27, 45, .22);
+    }
+
+    .core h3 { font-size: clamp(24px, 2.8vw, 38px); }
+    .core p { color: #c8dce8; font-size: clamp(15px, 1.5vw, 21px); }
+
+    .quote {
+      max-width: 1100px;
+      margin: auto 0;
+      padding-left: 26px;
+      border-left: 8px solid var(--cyan);
+      font-size: clamp(30px, 4.6vw, 64px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.025em;
+    }
+
+    .compact {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+
+    .compact li { margin-bottom: 9px; }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 20px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .versus {
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+
+    .code {
+      padding: 18px 22px;
+      border-radius: 14px;
+      background: #092238;
+      color: #d9f5f4;
+      font: 17px/1.5 Consolas, "Courier New", monospace;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dark .footer { color: #9eb9c8; }
+
+    .controls {
+      position: fixed;
+      right: 18px;
+      bottom: 16px;
+      z-index: 20;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(5, 20, 33, .88);
+      color: white;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .22);
+    }
+
+    .controls button {
+      width: 38px;
+      height: 34px;
+      border: 0;
+      border-radius: 8px;
+      background: #174a6b;
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .controls button:hover { background: var(--blue); }
+
+    #counter {
+      min-width: 58px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .notes {
+      display: none;
+      position: fixed;
+      z-index: 30;
+      left: 24px;
+      right: 24px;
+      bottom: 68px;
+      max-height: 36vh;
+      overflow: auto;
+      padding: 20px 24px;
+      border: 1px solid #46677c;
+      border-radius: 16px;
+      background: rgba(5, 20, 33, .97);
+      color: #e8f4f8;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, .32);
+    }
+
+    .notes.visible { display: block; }
+    .notes h3 { margin-bottom: 8px; color: #6de0e8; font-size: 18px; }
+    .notes p { margin-bottom: 0; color: #d5e3ea; font-size: 17px; }
+    .speaker-notes { display: none; }
+
+    .progress {
+      position: fixed;
+      z-index: 21;
+      left: 0;
+      bottom: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      transition: width .2s ease;
+    }
+
+    @media (max-width: 850px) {
+      .grid.three, .grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow { flex-wrap: wrap; }
+      .arrow { transform: rotate(90deg); }
+      .stack { grid-template-columns: 1fr; }
+      .comparison { grid-template-columns: 1fr; }
+      .versus { text-align: center; }
+    }
+
+    @media print {
+      html, body { height: auto; overflow: visible; background: white; }
+      .deck { height: auto; }
+      .slide, .slide.active {
+        display: flex;
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        page-break-after: always;
+      }
+      .controls, .progress, .notes { display: none !important; }
+      .speaker-notes {
+        display: block;
+        margin-top: 24px;
+        padding: 14px 18px;
+        border-left: 5px solid var(--cyan);
+        background: #edf5f8;
+        color: var(--ink);
+        font-size: 15px;
+      }
+      .dark .speaker-notes { color: var(--ink); }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="Bill Manager presentation">
+    <section class="slide dark active">
+      <p class="kicker">Strategic technology briefing</p>
+      <h1>Trustworthy Bill Intelligence</h1>
+      <p class="lead">How a deterministic bill calculator became a local, hybrid AI agent without giving the model control of financial truth.</p>
+      <div>
+        <span class="tag">Phi-4 Mini</span>
+        <span class="tag">Qwen3 Embeddings</span>
+        <span class="tag">SQLite BM25</span>
+        <span class="tag">Python</span>
+      </div>
+      <p class="footer">Two Minds AI Lab · Stage 0 → Hybrid Bill Manager</p>
+      <aside class="speaker-notes">Open with the central design decision: this is not an attempt to make a model calculate bills. It is an attempt to let natural language safely reach trusted calculations and evidence. The project is small by design, so every failure can be seen, explained, and fixed.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">The user problem</p>
+      <h2>Five simple questions. Zero tolerance for invented answers.</h2>
+      <div class="grid three">
+        <article class="card accent-blue"><h3>What is due?</h3><p>Find bills due in the next seven days and later this month.</p></article>
+        <article class="card accent-cyan"><h3>How much?</h3><p>Calculate upcoming and current-month totals exactly.</p></article>
+        <article class="card accent-green"><h3>What changed?</h3><p>Compare each bill and the overall month with prior history.</p></article>
+        <article class="card accent-amber"><h3>What is unusual?</h3><p>Apply explicit percentage and absolute-change thresholds.</p></article>
+        <article class="card accent-red"><h3>Which record?</h3><p>Find the right bill from provider names, concepts, dates, or amounts.</p></article>
+        <article class="card"><h3>Why trust it?</h3><p>Show evidence and keep model variation away from financial facts.</p></article>
+      </div>
+      <aside class="speaker-notes">The questions sound conversational, but they contain several different engineering problems: date windows, money arithmetic, anomaly rules, information retrieval, and natural-language intent. The solution separates these rather than asking one model to do everything.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Stage 0</p>
+      <h2>First, make the truth work without AI.</h2>
+      <div class="flow">
+        <div class="node"><strong>Six bill records</strong><span>Current statements plus previous-month history</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>Python rules</strong><span>Dates, totals, deltas, thresholds, paid status</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>Stable report</strong><span>The same inputs always produce the same answer</span></div>
+      </div>
+      <div class="grid three">
+        <article class="card"><span class="metric">$507.90</span><span class="caption">Due in seven days</span></article>
+        <article class="card"><span class="metric">$762.90</span><span class="caption">Current-month total</span></article>
+        <article class="card"><span class="metric">+4.0%</span><span class="caption">Month-over-month</span></article>
+      </div>
+      <aside class="speaker-notes">This baseline is the control group for every later AI feature. If an agent result disagrees with Stage 0, the agent is wrong. Paid bills are excluded, missing history is handled, and dates are driven by the input data rather than the computer clock or model assumptions.</aside>
+    </section>
+
+    <section class="slide dark">
+      <p class="kicker">The governing principle</p>
+      <div class="quote">Use AI for ambiguity.<br>Use code for accountability.</div>
+      <p class="lead">The model interprets the question. Python controls tools, validates matches, performs financial calculations, and formats the answer.</p>
+      <aside class="speaker-notes">This is the most reusable lesson in the project. Models are valuable where the user is ambiguous: “power bill,” “home internet,” or “did anything jump?” They are not the right authority for arithmetic, identifiers, state transitions, or policy enforcement.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Architecture</p>
+      <h2>A constrained agent loop with three read-only tools.</h2>
+      <div class="stack">
+        <div class="rail">
+          <div class="node"><strong>User language</strong><span>Natural questions, synonyms, amounts, dates</span></div>
+          <div class="node"><strong>Phi-4 Mini</strong><span>Understands intent and proposes tools</span></div>
+          <div class="node"><strong>Python coverage</strong><span>Allows required tools and suppresses unrelated ones</span></div>
+        </div>
+        <div class="core">
+          <h3>Bill Manager</h3>
+          <p>Retrieval evidence and deterministic calculations meet through stable bill IDs.</p>
+          <div class="code">search_bill_records
+get_bill_due_dates
+get_bill_change_analysis</div>
+        </div>
+        <div class="rail right">
+          <div class="node"><strong>Hybrid retrieval</strong><span>BM25 + Qwen3 + rank fusion</span></div>
+          <div class="node"><strong>Bill analysis</strong><span>Dates, totals, changes, classifications</span></div>
+          <div class="node"><strong>Safe response</strong><span>Validated evidence and deterministic formatting</span></div>
+        </div>
+      </div>
+      <aside class="speaker-notes">There is an agent loop, but it is not autonomous in the broad sense. All three tools are read-only. Phi-4 proposes intent; Python enforces tool coverage. Search identifies records, calculations enrich them, and bill_id is the join key. The final financial prose is rendered by code.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Division of labor</p>
+      <h2>Each component contributes a different kind of intelligence.</h2>
+      <div class="grid four">
+        <article class="card accent-blue">
+          <h3>Phi-4 Mini</h3>
+          <p><strong>Value:</strong> local language understanding and tool intent.</p>
+          <p><strong>Not trusted for:</strong> money, dates, or final factual rewriting.</p>
+        </article>
+        <article class="card accent-amber">
+          <h3>BM25</h3>
+          <p><strong>Value:</strong> exact providers, identifiers, and literal terms.</p>
+          <p><strong>Strength:</strong> fast, explainable, no model required.</p>
+        </article>
+        <article class="card accent-cyan">
+          <h3>Qwen3</h3>
+          <p><strong>Value:</strong> concepts and synonyms such as “power bill.”</p>
+          <p><strong>Strength:</strong> meaning beyond exact vocabulary.</p>
+        </article>
+        <article class="card accent-green">
+          <h3>Python</h3>
+          <p><strong>Value:</strong> policy, validation, calculation, joins, formatting.</p>
+          <p><strong>Role:</strong> the system of record for behavior.</p>
+        </article>
+      </div>
+      <aside class="speaker-notes">BM25 is often misspelled as BH25; the correct name is BM25. Qwen3 is used only as an embedding model here. Phi-4 is the language-and-routing layer. None replaces the others: together they cover literal matching, conceptual matching, conversational intent, and deterministic execution.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Why hybrid retrieval</p>
+      <h2>Exact words and human meaning fail in opposite directions.</h2>
+      <div class="comparison">
+        <article class="card accent-amber">
+          <h3>BM25 sees the text</h3>
+          <ul class="compact">
+            <li>“Chase Visa” → strong exact match</li>
+            <li>“142.50” → structured exact match</li>
+            <li>“power bill” → may miss “PSE Electricity”</li>
+          </ul>
+        </article>
+        <div class="versus">PLUS</div>
+        <article class="card accent-cyan">
+          <h3>Qwen3 sees the meaning</h3>
+          <ul class="compact">
+            <li>“power bill” → PSE Electricity</li>
+            <li>“home internet” → Xfinity Broadband</li>
+            <li>Exact unseen amounts → dangerous approximation</li>
+          </ul>
+        </article>
+      </div>
+      <p class="lead">Reciprocal Rank Fusion combines ranks—not incomparable BM25 and cosine scores.</p>
+      <aside class="speaker-notes">The hybrid design avoids choosing one retrieval ideology. Lexical retrieval is precise but vocabulary-sensitive. Embeddings understand paraphrases but can confidently return the nearest wrong record. Reciprocal Rank Fusion rewards agreement and strong rank positions without pretending the raw scores share a scale.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Pitfall 1</p>
+      <h2>“OpenAI-compatible” did not mean identical tool behavior.</h2>
+      <div class="grid two">
+        <article class="card accent-red">
+          <h3>What failed</h3>
+          <p>Phi-4 Mini sometimes emitted tool requests as ordinary JSON text instead of structured <code>tool_calls</code>. The standard agent loop treated that text as the final answer.</p>
+        </article>
+        <article class="card accent-green">
+          <h3>How it was fixed</h3>
+          <p>The local adapter recognizes native calls and JSON-text calls. Python intent coverage restores required read-only tools when metadata is absent.</p>
+        </article>
+      </div>
+      <p class="lead">Compatibility is a protocol claim—not a reliability guarantee.</p>
+      <aside class="speaker-notes">The lesson is to inspect raw provider responses before trusting a framework abstraction. Tool schemas can be accepted while the response semantics differ. The fallback is safe only because these tools are read-only. The same fallback must not be copied to tools that send email, transfer money, or modify records.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Pitfall 2</p>
+      <h2>A correct tool result can still become incorrect prose.</h2>
+      <div class="flow">
+        <div class="node"><strong>Correct JSON</strong><span>Trusted dates and totals</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color: var(--red)"><strong>Model rewrite</strong><span>Invented dates, changed periods, confused amounts</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color: var(--green)"><strong>Python formatter</strong><span>Stable, typed, factual presentation</span></div>
+      </div>
+      <div class="card accent-green">
+        <h3>Fix</h3>
+        <p>Phi-4 selects intent; deterministic code formats all financial results. Model prose is allowed only where variation cannot alter the truth.</p>
+      </div>
+      <aside class="speaker-notes">Many agent designs stop validating once a tool returns good data. This project found the second failure boundary: synthesis. A model can distort authoritative data while making it sound more natural. Deterministic formatting eliminates that risk for financial output.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Pitfall 3</p>
+      <h2>Token search broke a decimal amount into false evidence.</h2>
+      <div class="grid two">
+        <article class="card accent-red">
+          <h3>Observed</h3>
+          <div class="code">Query: 142.40
+Tokens: "142" OR "40"
+Result: unrelated partial matches</div>
+        </article>
+        <article class="card accent-green">
+          <h3>Fixed</h3>
+          <div class="code">Detect money/date patterns
+→ compare structured fields exactly
+→ no exact match means no result</div>
+        </article>
+      </div>
+      <p class="lead">In financial retrieval, “nearest” is not a substitute for “equal.”</p>
+      <aside class="speaker-notes">SQLite FTS5 did exactly what a text engine should do: tokenize punctuation. But that behavior is wrong for money. The fix detects two-decimal amounts and ISO dates before full-text tokenization, validates them against structured fields, and prevents semantic fallback from approximating an unmatched exact value.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Pitfall 4</p>
+      <h2>Cross-tool joins leaked unrelated bills.</h2>
+      <div class="grid two">
+        <article class="card accent-red">
+          <h3>Before</h3>
+          <p>Search ranked PSE Electricity first, but the due-date tool returned Chase, PSE, and Citi. The answer ignored the user’s phrase “only for rank 1.”</p>
+        </article>
+        <article class="card accent-green">
+          <h3>After</h3>
+          <p>Retrieval rank 1 supplies a stable <code>bill_id</code>. Due and change details join only on that ID. No search match suppresses unrelated details.</p>
+        </article>
+      </div>
+      <p class="lead">Agent tools do not compose safely by accident; joins are application logic.</p>
+      <aside class="speaker-notes">This is a classic data-system problem appearing inside an agent. The model’s prose and list position are not keys. Stable identifiers are. The same rule applies to document assistants, support systems, medical records, and enterprise copilots: retrieve an entity ID, then use that ID for downstream actions or enrichment.</aside>
+    </section>
+
+    <section class="slide dark">
+      <p class="kicker">General learning</p>
+      <h2>A reusable pattern for trustworthy AI systems.</h2>
+      <div class="grid three">
+        <article class="card accent-blue"><h3>1. Establish truth</h3><p>Build and test deterministic behavior before adding a model.</p></article>
+        <article class="card accent-cyan"><h3>2. Separate roles</h3><p>Let models interpret; let code enforce rules and state.</p></article>
+        <article class="card accent-amber"><h3>3. Retrieve twice</h3><p>Combine lexical precision with semantic recall.</p></article>
+        <article class="card accent-red"><h3>4. Fail closed</h3><p>Exact values, missing matches, and write actions require certainty.</p></article>
+        <article class="card accent-green"><h3>5. Join by ID</h3><p>Never connect tools through generated prose or display names.</p></article>
+        <article class="card"><h3>6. Test boundaries</h3><p>Provider response, routing, retrieval, joins, synthesis, and output.</p></article>
+      </div>
+      <aside class="speaker-notes">These six ideas are the transferable product. They apply beyond bills: customer support, compliance, operations, healthcare, education, or any assistant using enterprise data. The architecture is less about picking the best model and more about defining where probabilistic behavior is acceptable.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">What a systems-minded reviewer would ask next</p>
+      <h2>Can it prove value beyond a six-record demonstration?</h2>
+      <div class="grid two">
+        <article class="card accent-blue">
+          <h3>Evidence</h3>
+          <ul class="compact">
+            <li>Build a representative email and statement dataset</li>
+            <li>Track Recall@3 and Mean Reciprocal Rank</li>
+            <li>Measure exact-match false positives</li>
+            <li>Record latency and local resource cost</li>
+          </ul>
+        </article>
+        <article class="card accent-green">
+          <h3>Trust</h3>
+          <ul class="compact">
+            <li>Attach source IDs and citations to every answer</li>
+            <li>Separate ingestion from normalized bill records</li>
+            <li>Monitor model and runtime version changes</li>
+            <li>Require confirmation before any future write tool</li>
+          </ul>
+        </article>
+      </div>
+      <aside class="speaker-notes">A strong technology review should challenge the demo with measurement. Does hybrid retrieval outperform each component on real data? What are the failure categories? What does local inference cost in time and memory? Can every answer point back to a source? These questions convert an experiment into an engineering system.</aside>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">Roadmap</p>
+      <h2>Move from structured demo to evidence-backed assistant.</h2>
+      <div class="flow">
+        <div class="node"><strong>Now</strong><span>Six normalized bill records and read-only tools</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>Next</strong><span>Read-only Gmail ingestion and source citations</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>Then</strong><span>Evaluation set, metrics, failure dashboard</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>Later</strong><span>Human-approved reminders or other write actions</span></div>
+      </div>
+      <div class="card accent-amber">
+        <h3>Gate for every stage</h3>
+        <p>No new autonomy until the previous stage is measurable, observable, and safe under failure.</p>
+      </div>
+      <aside class="speaker-notes">The immediate gap is that retrieval searches synthetic normalized records, not real emails. Read-only Gmail ingestion should come before any action capability. The output should preserve source references. Only after retrieval quality and failure behavior are measured should the project consider reminders or writes—and those require explicit confirmation.</aside>
+    </section>
+
+    <section class="slide dark">
+      <p class="kicker">Closing idea</p>
+      <div class="quote">The breakthrough is not that the model can answer.<br>It is that the system knows what the model must not decide.</div>
+      <p class="lead">A small local model becomes useful when surrounded by retrieval, deterministic tools, stable identifiers, validation, and evidence.</p>
+      <p class="footer">Use ← → or Space to navigate · Press N for reader notes · Print to PDF for a shareable deck</p>
+      <aside class="speaker-notes">Close by returning to the architecture’s purpose. The project demonstrates that a smaller local model can create a useful conversational interface, provided it is not treated as the database, calculator, policy engine, or final authority. Trust comes from the whole system, not the model alone.</aside>
+    </section>
+  </main>
+
+  <div class="notes" id="notes" aria-live="polite">
+    <h3>Reader notes</h3>
+    <p id="notesText"></p>
+  </div>
+
+  <div class="controls" aria-label="Slide controls">
+    <button id="previous" title="Previous slide">←</button>
+    <span id="counter">1 / 15</span>
+    <button id="next" title="Next slide">→</button>
+    <button id="toggleNotes" title="Toggle reader notes">N</button>
+  </div>
+  <div class="progress" id="progress"></div>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll(".slide")];
+      const counter = document.getElementById("counter");
+      const progress = document.getElementById("progress");
+      const notes = document.getElementById("notes");
+      const notesText = document.getElementById("notesText");
+      let index = 0;
+
+      function show(nextIndex) {
+        index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+        slides.forEach((slide, position) => {
+          slide.classList.toggle("active", position === index);
+        });
+        counter.textContent = `${index + 1} / ${slides.length}`;
+        progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+        const speakerNotes = slides[index].querySelector(".speaker-notes");
+        notesText.textContent = speakerNotes ? speakerNotes.textContent : "";
+        history.replaceState(null, "", `#${index + 1}`);
+      }
+
+      function toggleNotes() {
+        notes.classList.toggle("visible");
+      }
+
+      document.getElementById("previous").addEventListener("click", () => show(index - 1));
+      document.getElementById("next").addEventListener("click", () => show(index + 1));
+      document.getElementById("toggleNotes").addEventListener("click", toggleNotes);
+
+      document.addEventListener("keydown", event => {
+        if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          show(index + 1);
+        } else if (["ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          show(index - 1);
+        } else if (event.key.toLowerCase() === "n") {
+          toggleNotes();
+        } else if (event.key === "Home") {
+          show(0);
+        } else if (event.key === "End") {
+          show(slides.length - 1);
+        }
+      });
+
+      const requested = Number.parseInt(location.hash.slice(1), 10);
+      show(Number.isFinite(requested) ? requested - 1 : 0);
+    })();
+  </script>
+</body>
+</html>
